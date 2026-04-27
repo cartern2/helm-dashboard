@@ -1308,6 +1308,7 @@
     <a href="#float-plan">Float Plan</a>
     <a href="#route">Route</a>
     <a href="#weather">Weather</a>
+    <a href="#marine">Marine</a>
     <a href="#conditions">Go / No-Go</a>
     <a href="#safety">Safety</a>
   </nav>
@@ -1819,6 +1820,46 @@
             <span class="copy-confirmation" data-copy-confirmation></span>
           </div>
         </article>
+      </div>
+    </section>
+
+    <section id="marine" aria-labelledby="marine-title">
+      <div class="section-title">
+        <h2 id="marine-title">Marine Conditions</h2>
+        <span class="small-note">Manual wave and buoy checks</span>
+      </div>
+
+      <div class="marine-warning">Do not rely on point forecast for waves. Verify NOAA marine forecast, buoy data, and visual conditions.</div>
+
+      <article class="log-card" style="margin-top: 12px;">
+        <h3>Manual Marine Log</h3>
+        <div class="log-grid">
+          <label class="form-label">Wave height
+            <input id="marineWaveHeight" type="text" placeholder="1-2 ft">
+          </label>
+          <label class="form-label">Wave direction
+            <input id="marineWaveDirection" type="text" placeholder="NW">
+          </label>
+          <label class="form-label">Wave period
+            <input id="marineWavePeriod" type="text" placeholder="4 sec">
+          </label>
+          <label class="form-label">Water temperature
+            <input id="marineWaterTemperature" type="text" placeholder="62°F">
+          </label>
+          <label class="form-label">Buoy / marine forecast source
+            <input id="marineSource" type="text" placeholder="NDBC 45163 / NOAA Lake Huron">
+          </label>
+        </div>
+        <label class="form-label" style="margin-top: 10px;">Marine notes
+          <textarea id="marineNotes" placeholder="Steep chop, swell direction, whitecaps, harbor report, buoy trend, visual conditions."></textarea>
+        </label>
+      </article>
+
+      <div class="action-grid" style="margin-top: 12px;">
+        <a class="action-link" href="https://www.weather.gov/marine/lmopen">NOAA Lake Michigan Marine</a>
+        <a class="action-link" href="https://www.weather.gov/marine/lhopen">NOAA Lake Huron Marine</a>
+        <a class="action-link" href="https://www.weather.gov/marine/dtxmz">NOAA Saginaw Bay / Huron Zones</a>
+        <a class="action-link" href="https://www.ndbc.noaa.gov/station_page.php?station=45163">NDBC Saginaw Bay Buoy</a>
       </div>
     </section>
 
