@@ -1,0 +1,2082 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Helm Dashboard">
+  <meta name="theme-color" content="#0b3142">
+  <title>Boyne City to Bay City Helm Dashboard</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #11212a;
+      --muted: #334852;
+      --line: #9fb0b8;
+      --panel: #ffffff;
+      --deck: #eef4f6;
+      --navy: #0b3142;
+      --blue: #075f86;
+      --aqua: #d8f1f5;
+      --green: #09643f;
+      --amber: #805300;
+      --red: #b42318;
+      --shadow: 0 8px 24px rgba(17, 33, 42, 0.08);
+    }
+
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --ink: #f3fbfd;
+      --muted: #c7d6dc;
+      --line: #6f8792;
+      --panel: #0d2633;
+      --deck: #061821;
+      --navy: #082837;
+      --blue: #7bd6f6;
+      --aqua: #173f4c;
+      --green: #7be0b3;
+      --amber: #ffd36b;
+      --red: #ff9b91;
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--deck);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      font-size: 18px;
+      line-height: 1.45;
+      letter-spacing: 0;
+      -webkit-text-size-adjust: 100%;
+      text-rendering: optimizeLegibility;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      z-index: 10;
+      transform: translateY(-140%);
+      background: #fff;
+      color: var(--navy);
+      padding: 10px 14px;
+      border-radius: 6px;
+    }
+
+    .skip-link:focus {
+      transform: translateY(0);
+    }
+
+    header {
+      background: var(--navy);
+      color: #fff;
+      padding: calc(18px + env(safe-area-inset-top)) 18px 18px;
+    }
+
+    .header-inner {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .kicker {
+      margin: 0 0 6px;
+      color: #bfe7ef;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 760px;
+      font-size: clamp(2.15rem, 9vw, 4.6rem);
+    }
+
+    .subhead {
+      max-width: 780px;
+      margin: 12px 0 0;
+      color: #d6eef3;
+      font-size: 1.12rem;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    button,
+    .button {
+      min-height: 58px;
+      min-width: 58px;
+      border: 3px solid transparent;
+      border-radius: 8px;
+      padding: 0 18px;
+      background: #fff;
+      color: var(--navy);
+      font: inherit;
+      font-size: 1.05rem;
+      font-weight: 950;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus-visible,
+    .tabs a:focus-visible,
+    .bottom-nav a:focus-visible,
+    .skip-link:focus-visible {
+      outline: 4px solid #ffd36b;
+      outline-offset: 2px;
+    }
+
+    .mode-toggle {
+      border-color: rgba(255, 255, 255, 0.55);
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+
+    .reset-button {
+      border-color: rgba(255, 255, 255, 0.65);
+      background: rgba(180, 35, 24, 0.22);
+      color: #fff;
+    }
+
+    .status-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .status {
+      min-height: 76px;
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .status b {
+      display: block;
+      font-size: 0.78rem;
+      color: #bfe7ef;
+      text-transform: uppercase;
+    }
+
+    .status span {
+      display: block;
+      margin-top: 4px;
+      font-size: 1.15rem;
+      font-weight: 900;
+    }
+
+    .tabs {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 10px 12px;
+      background: rgba(242, 246, 247, 0.96);
+      border-bottom: 1px solid var(--line);
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .tabs a {
+      flex: 0 0 auto;
+      min-height: 56px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 18px;
+      border-radius: 8px;
+      border: 2px solid var(--line);
+      background: #fff;
+      color: var(--navy);
+      font-size: 1rem;
+      font-weight: 900;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 18px 12px calc(116px + env(safe-area-inset-bottom));
+    }
+
+    section {
+      margin-top: 22px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: 1.55rem;
+    }
+
+    .small-note {
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .route {
+      display: grid;
+      gap: 12px;
+    }
+
+    .leg-list,
+    .fuel-grid,
+    .risk-grid,
+    .helm-grid,
+    .log-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .leg {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-left: 8px solid var(--blue);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .leg strong {
+      display: block;
+      font-size: 1.13rem;
+      line-height: 1.2;
+    }
+
+    .leg span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.94rem;
+      font-weight: 750;
+    }
+
+    .distance {
+      min-width: 86px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: var(--navy);
+      color: #fff;
+      text-align: center;
+      font-size: 1.22rem;
+      font-weight: 950;
+    }
+
+    .total-route {
+      padding: 16px;
+      border: 2px solid var(--navy);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .total-route b {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .total-route span {
+      display: block;
+      margin-top: 4px;
+      color: var(--navy);
+      font-size: 2rem;
+      font-weight: 950;
+      line-height: 1;
+    }
+
+    .fuel-card,
+    .risk-card,
+    .helm-card,
+    .log-card,
+    .print-card {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .fuel-card h3,
+    .risk-card h3,
+    .helm-card h3,
+    .log-card h3,
+    .print-card h3 {
+      margin-bottom: 8px;
+      font-size: 1.16rem;
+    }
+
+    .last-checked {
+      display: block;
+      margin: 8px 0 12px;
+      padding: 12px;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      background: var(--aqua);
+      color: var(--ink);
+      font-size: 1.08rem;
+      font-weight: 900;
+    }
+
+    label.form-label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 54px;
+      padding: 12px;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 1.05rem;
+      font-weight: 800;
+    }
+
+    textarea {
+      min-height: 96px;
+      resize: vertical;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #5d6f78;
+      opacity: 1;
+    }
+
+    .formula {
+      padding: 12px;
+      border-radius: 8px;
+      background: var(--aqua);
+      color: var(--ink);
+      font-size: 1.05rem;
+      font-weight: 900;
+    }
+
+    .risk-meter {
+      padding: 16px;
+      border-radius: 8px;
+      border: 3px solid #8bd2b5;
+      background: #f3fff9;
+      color: #063b26;
+      box-shadow: var(--shadow);
+    }
+
+    .risk-meter[data-risk="yellow"] {
+      border-color: #efcf82;
+      background: #fff9e8;
+      color: #4a3100;
+    }
+
+    .risk-meter[data-risk="red"] {
+      border-color: #e7a19b;
+      background: #fff0ef;
+      color: #64110b;
+    }
+
+    .risk-readout {
+      display: block;
+      margin-top: 4px;
+      font-size: 2rem;
+      font-weight: 950;
+      line-height: 1;
+    }
+
+    .risk-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .risk-button {
+      border-width: 3px;
+      color: #10242d;
+    }
+
+    .risk-button.green {
+      background: #dff8ec;
+      border-color: #249563;
+    }
+
+    .risk-button.yellow {
+      background: #fff2c9;
+      border-color: #bd850f;
+    }
+
+    .risk-button.red {
+      background: #ffe0dd;
+      border-color: #c63428;
+    }
+
+    .decision-panel {
+      border: 3px solid #249563;
+      border-radius: 8px;
+      background: #f3fff9;
+      color: #063b26;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .decision-panel[data-decision="yellow"] {
+      border-color: #bd850f;
+      background: #fff9e8;
+      color: #4a3100;
+    }
+
+    .decision-panel[data-decision="red"] {
+      border-color: #b42318;
+      background: #fff0ef;
+      color: #64110b;
+    }
+
+    .decision-banner {
+      display: grid;
+      gap: 4px;
+      padding: 18px;
+      background: #09643f;
+      color: #fff;
+    }
+
+    .decision-panel[data-decision="yellow"] .decision-banner {
+      background: #996b10;
+      color: #fff;
+    }
+
+    .decision-panel[data-decision="red"] .decision-banner {
+      background: #b42318;
+      color: #fff;
+    }
+
+    .decision-label {
+      font-size: clamp(2.4rem, 14vw, 5rem);
+      font-weight: 1000;
+      line-height: 0.95;
+    }
+
+    .decision-detail {
+      font-size: 1.05rem;
+      font-weight: 900;
+    }
+
+    .decision-controls {
+      display: grid;
+      gap: 12px;
+      padding: 14px;
+    }
+
+    .decision-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .decision-button {
+      min-height: 66px;
+      border-width: 3px;
+      color: #10242d;
+    }
+
+    .decision-button.go {
+      background: #dff8ec;
+      border-color: #249563;
+    }
+
+    .decision-button.caution {
+      background: #fff2c9;
+      border-color: #bd850f;
+    }
+
+    .decision-button.no-go {
+      background: #ffe0dd;
+      border-color: #c63428;
+    }
+
+    .quick-inputs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .decision-updated {
+      display: block;
+      color: inherit;
+      font-size: 1rem;
+      font-weight: 900;
+    }
+
+    .captain-flow {
+      display: grid;
+      gap: 10px;
+    }
+
+    .flow-action {
+      min-height: 72px;
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 14px;
+      border: 3px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--navy);
+      text-decoration: none;
+      box-shadow: var(--shadow);
+    }
+
+    .flow-action b {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--navy);
+      color: #fff;
+      font-size: 1.15rem;
+      font-weight: 1000;
+    }
+
+    .flow-action strong {
+      display: block;
+      font-size: 1.16rem;
+      line-height: 1.1;
+    }
+
+    .flow-action span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 850;
+    }
+
+    .action-grid,
+    .marina-actions {
+      display: grid;
+      gap: 10px;
+    }
+
+    .action-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .action-link {
+      min-height: 66px;
+      display: grid;
+      place-items: center;
+      padding: 10px;
+      border: 3px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--navy);
+      font-size: 1.02rem;
+      font-weight: 950;
+      line-height: 1.1;
+      text-align: center;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .action-link.primary {
+      border-color: var(--blue);
+      background: var(--navy);
+      color: #fff;
+    }
+
+    .action-link.warning {
+      border-color: #b42318;
+      background: #b42318;
+      color: #fff;
+    }
+
+    .marina-actions {
+      grid-template-columns: repeat(2, 1fr);
+      margin-top: 12px;
+    }
+
+    .stop {
+      position: relative;
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .stop-number {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--navy);
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 900;
+    }
+
+    .stop h3 {
+      font-size: 1.28rem;
+      margin-top: 2px;
+    }
+
+    .coords {
+      margin-top: 8px;
+      display: grid;
+      gap: 6px;
+      color: var(--navy);
+      font-size: 1.04rem;
+      font-weight: 850;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--aqua);
+      color: #0f5068;
+      font-size: 0.9rem;
+      font-weight: 900;
+    }
+
+    .weather-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .weather {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .weather h3 {
+      padding: 14px;
+      font-size: 1.14rem;
+      background: #eef7f9;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .fields {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .field {
+      min-height: 74px;
+      padding: 10px;
+      border: 1px dashed #aebdc5;
+      border-radius: 8px;
+      background: #fbfdfd;
+    }
+
+    .field b {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+    }
+
+    .field span {
+      color: var(--muted);
+      font-weight: 750;
+    }
+
+    .conditions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .warning-panel {
+      padding: 16px;
+      border: 3px solid var(--red);
+      border-radius: 8px;
+      background: #fff2f0;
+      color: #5f120c;
+      box-shadow: var(--shadow);
+    }
+
+    .warning-panel h3 {
+      margin-bottom: 8px;
+      color: #8f1f16;
+      font-size: 1.28rem;
+    }
+
+    .emergency-banner {
+      display: grid;
+      gap: 6px;
+      padding: 16px;
+      border-radius: 8px;
+      background: #b42318;
+      color: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .emergency-banner b {
+      font-size: 1.45rem;
+      line-height: 1.05;
+    }
+
+    .emergency-banner span {
+      font-weight: 800;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+      border-top: 2px solid var(--line);
+      background: rgba(246, 250, 251, 0.98);
+      box-shadow: 0 -8px 20px rgba(17, 33, 42, 0.16);
+    }
+
+    .bottom-nav a {
+      min-height: 62px;
+      display: grid;
+      place-items: center;
+      padding: 6px 4px;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--navy);
+      font-size: 0.86rem;
+      font-weight: 950;
+      line-height: 1.05;
+      text-align: center;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .bottom-nav a.emergency-link {
+      border-color: #b42318;
+      background: #b42318;
+      color: #fff;
+    }
+
+    .condition {
+      min-height: 150px;
+      padding: 14px;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .condition h3 {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+
+    .go {
+      border-color: #8bd2b5;
+    }
+
+    .caution {
+      border-color: #efcf82;
+    }
+
+    .no-go {
+      border-color: #e7a19b;
+    }
+
+    .go h3 {
+      color: var(--green);
+    }
+
+    .caution h3 {
+      color: var(--amber);
+    }
+
+    .no-go h3 {
+      color: var(--red);
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 1.15rem;
+    }
+
+    li + li {
+      margin-top: 6px;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+    }
+
+    .checklist-group {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .checklist-group h3 {
+      font-size: 1.2rem;
+    }
+
+    .check {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      align-items: start;
+      gap: 12px;
+      min-height: 58px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      font-weight: 820;
+    }
+
+    input[type="checkbox"] {
+      width: 30px;
+      height: 30px;
+      min-height: 30px;
+      margin: 0;
+      accent-color: var(--blue);
+    }
+
+    .float-plan {
+      display: grid;
+      gap: 10px;
+    }
+
+    .plan-field {
+      min-height: 72px;
+      padding: 12px;
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .plan-field b {
+      display: block;
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+    }
+
+    .plan-field span {
+      display: block;
+      margin-top: 5px;
+      color: var(--ink);
+      font-weight: 850;
+    }
+
+    .reference {
+      padding: 14px;
+      border-radius: 8px;
+      background: #dfecee;
+      color: #263941;
+      font-size: 0.94rem;
+    }
+
+    .reference p {
+      margin: 0;
+    }
+
+    @media (min-width: 720px) {
+      main {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .route {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .weather-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .fuel-grid,
+      .risk-grid,
+      .float-plan,
+      .helm-grid,
+      .log-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        font-size: 17px;
+      }
+
+      .status-strip,
+      .conditions {
+        grid-template-columns: 1fr;
+      }
+
+      .status-strip {
+        display: none;
+      }
+
+      .fields {
+        grid-template-columns: 1fr;
+      }
+
+      .quick-inputs {
+        grid-template-columns: 1fr;
+      }
+
+      .action-grid,
+      .marina-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .leg {
+        grid-template-columns: 1fr;
+      }
+
+      .distance {
+        width: 100%;
+      }
+
+      .section-title {
+        display: block;
+      }
+
+      .small-note {
+        display: block;
+        margin-top: 5px;
+      }
+
+      .tabs {
+        display: none;
+      }
+    }
+
+    html[data-theme="dark"] header {
+      background: #082837;
+    }
+
+    html[data-theme="dark"] .tabs {
+      background: rgba(7, 24, 32, 0.96);
+    }
+
+    html[data-theme="dark"] .tabs a,
+    html[data-theme="dark"] .weather,
+    html[data-theme="dark"] .condition,
+    html[data-theme="dark"] .check,
+    html[data-theme="dark"] .stop,
+    html[data-theme="dark"] .fuel-card,
+    html[data-theme="dark"] .risk-card,
+    html[data-theme="dark"] .total-route,
+    html[data-theme="dark"] .plan-field,
+    html[data-theme="dark"] .helm-card,
+    html[data-theme="dark"] .log-card,
+    html[data-theme="dark"] .print-card {
+      background: var(--panel);
+    }
+
+    html[data-theme="dark"] .weather h3 {
+      background: #143441;
+    }
+
+    html[data-theme="dark"] .field {
+      background: #0b202b;
+    }
+
+    html[data-theme="dark"] .risk-meter {
+      background: #082116;
+      color: #e8fff5;
+    }
+
+    html[data-theme="dark"] .risk-meter[data-risk="yellow"] {
+      background: #2a2007;
+      color: #fff4cc;
+    }
+
+    html[data-theme="dark"] .risk-meter[data-risk="red"] {
+      background: #2d0c09;
+      color: #ffe3df;
+    }
+
+    html[data-theme="dark"] .decision-panel {
+      background: #082116;
+      color: #e8fff5;
+    }
+
+    html[data-theme="dark"] .decision-panel[data-decision="yellow"] {
+      background: #2a2007;
+      color: #fff4cc;
+    }
+
+    html[data-theme="dark"] .decision-panel[data-decision="red"] {
+      background: #2d0c09;
+      color: #ffe3df;
+    }
+
+    html[data-theme="dark"] .reference {
+      background: #12313d;
+      color: #dce8eb;
+    }
+
+    html[data-theme="dark"] .warning-panel {
+      background: #2d0c09;
+      color: #ffe3df;
+    }
+
+    html[data-theme="dark"] .total-route span,
+    html[data-theme="dark"] .coords,
+    html[data-theme="dark"] .tabs a,
+    html[data-theme="dark"] .pill {
+      color: var(--ink);
+    }
+
+    html[data-theme="dark"] input,
+    html[data-theme="dark"] select,
+    html[data-theme="dark"] textarea {
+      background: #071c26;
+      color: var(--ink);
+    }
+
+    html[data-theme="dark"] .bottom-nav {
+      background: rgba(7, 24, 32, 0.98);
+    }
+
+    html[data-theme="dark"] .bottom-nav a {
+      background: var(--panel);
+      color: var(--ink);
+    }
+
+    html[data-theme="dark"] .bottom-nav a.emergency-link {
+      background: #b42318;
+      color: #fff;
+    }
+
+    html[data-theme="dark"] .action-link {
+      background: var(--panel);
+      color: var(--ink);
+    }
+
+    html[data-theme="dark"] .flow-action {
+      background: var(--panel);
+      color: var(--ink);
+    }
+
+    html[data-theme="dark"] .action-link.primary,
+    html[data-theme="dark"] .action-link.warning {
+      color: #fff;
+    }
+
+    @media print {
+      header,
+      .tabs,
+      .bottom-nav,
+      .top-actions,
+      #captain-flow,
+      #today,
+      #fuel,
+      #risk,
+      #route,
+      #weather,
+      #conditions,
+      #safety,
+      .reference {
+        display: none !important;
+      }
+
+      body {
+        background: #fff;
+        color: #000;
+      }
+
+      main {
+        max-width: none;
+        padding: 0;
+      }
+
+      #float-plan {
+        display: block;
+      }
+
+      .emergency-banner,
+      .plan-field,
+      .print-card {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#today">Skip to today route</a>
+
+  <header>
+    <div class="header-inner">
+      <p class="kicker">Helm Dashboard</p>
+      <h1>Boyne City to Bay City</h1>
+      <p class="subhead">Mobile-first trip board for marina stops, weather checks, safety prep, and go/no-go calls.</p>
+      <div class="top-actions">
+        <button class="mode-toggle" id="modeToggle" type="button" aria-pressed="false">Dark Mode</button>
+        <button class="reset-button" id="resetDashboard" type="button">Reset</button>
+      </div>
+      <div class="status-strip" aria-label="Trip summary">
+        <div class="status">
+          <b>Route</b>
+          <span>5 legs</span>
+        </div>
+        <div class="status">
+          <b>Approx. Total</b>
+          <span>229 nm</span>
+        </div>
+        <div class="status">
+          <b>Primary Check</b>
+          <span>Wind + waves</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs" aria-label="Dashboard sections">
+    <a href="#decision">Decision</a>
+    <a href="#quick-actions">Actions</a>
+    <a href="#today">Today</a>
+    <a href="#fuel">Fuel</a>
+    <a href="#risk">Risk</a>
+    <a href="#float-plan">Float Plan</a>
+    <a href="#route">Route</a>
+    <a href="#weather">Weather</a>
+    <a href="#conditions">Go / No-Go</a>
+    <a href="#safety">Safety</a>
+  </nav>
+
+  <main>
+    <section id="captain-flow" aria-labelledby="captain-flow-title">
+      <div class="section-title">
+        <h2 id="captain-flow-title">Captain Flow</h2>
+        <span class="small-note">Three actions, in order</span>
+      </div>
+
+      <div class="captain-flow">
+        <a class="flow-action" href="#weather">
+          <b>1</b>
+          <span><strong>Check Conditions</strong>Wind, waves, visibility, notes.</span>
+        </a>
+        <a class="flow-action" href="#decision">
+          <b>2</b>
+          <span><strong>Decide GO / CAUTION / NO-GO</strong>Use thresholds or manual call.</span>
+        </a>
+        <a class="flow-action" href="#quick-actions">
+          <b>3</b>
+          <span><strong>Contact Help / Marina</strong>Emergency contact, marina calls, weather shortcut.</span>
+        </a>
+      </div>
+    </section>
+
+    <section id="decision" aria-labelledby="decision-title">
+      <div class="section-title">
+        <h2 id="decision-title">Decision</h2>
+        <span class="small-note">Fast manual call plus automatic thresholds</span>
+      </div>
+
+      <div class="decision-panel" id="decisionPanel" data-decision="green">
+        <div class="decision-banner">
+          <span class="decision-label" id="decisionLabel">GO</span>
+          <span class="decision-detail" id="decisionDetail">Safe range entered or manual GO selected.</span>
+          <span class="decision-updated" id="decisionUpdated">Decision not updated this session</span>
+        </div>
+
+        <div class="decision-controls">
+          <div class="decision-buttons" aria-label="Manual decision">
+            <button class="decision-button go" type="button" data-decision-choice="green">GO</button>
+            <button class="decision-button caution" type="button" data-decision-choice="yellow">CAUTION</button>
+            <button class="decision-button no-go" type="button" data-decision-choice="red">NO-GO</button>
+          </div>
+
+          <div class="quick-inputs">
+            <label class="form-label">Wind kt
+              <input id="decisionWind" type="number" inputmode="decimal" min="0" step="1" placeholder="10">
+            </label>
+            <label class="form-label">Waves ft
+              <input id="decisionWaves" type="number" inputmode="decimal" min="0" step="0.5" placeholder="1">
+            </label>
+            <label class="form-label">Visibility nm
+              <input id="decisionVisibility" type="number" inputmode="decimal" min="0" step="0.5" placeholder="5">
+            </label>
+          </div>
+
+          <label class="form-label">Reason for decision
+            <textarea id="decisionReason" placeholder="Example: 12 kt NW, 1-2 ft, clear visibility, crew comfortable."></textarea>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <section id="quick-actions" aria-labelledby="quick-actions-title">
+      <div class="section-title">
+        <h2 id="quick-actions-title">Quick Actions</h2>
+        <span class="small-note">Large buttons for underway use</span>
+      </div>
+
+      <div class="action-grid">
+        <a class="action-link warning" id="emergencyContactLink" href="tel:">Call Emergency Contact</a>
+        <a class="action-link primary" href="weather://">Open Weather App</a>
+        <a class="action-link" href="#weatherNotes">Notes / Log</a>
+        <a class="action-link" href="https://forecast.weather.gov/MapClick.php?lat=44.8&amp;lon=-84.5">NOAA Forecast</a>
+      </div>
+
+      <label class="form-label" style="margin-top: 12px;">Emergency contact number
+        <input id="emergencyContactNumber" type="tel" inputmode="tel" placeholder="Add phone number">
+      </label>
+
+      <div class="marina-actions" aria-label="Marina call buttons">
+        <a class="action-link" href="tel:+12315823340">Harborage Marina</a>
+        <a class="action-link" href="tel:+12313476691">Petoskey Marina</a>
+        <a class="action-link" href="tel:+19068473561">Mackinac Harbor</a>
+        <a class="action-link" href="tel:+19893353436">Harrisville Harbor</a>
+        <a class="action-link" href="tel:+19893622731">East Tawas Harbor</a>
+        <a class="action-link" href="tel:+19898942800">Liberty Harbor</a>
+      </div>
+    </section>
+
+    <section id="helm-check" aria-labelledby="helm-check-title">
+      <div class="section-title">
+        <h2 id="helm-check-title">Helm Check</h2>
+        <span class="small-note">Update before departure and underway</span>
+      </div>
+
+      <div class="helm-grid">
+        <article class="helm-card">
+          <h3>Last Checked</h3>
+          <span class="last-checked" id="lastChecked">Not checked this session</span>
+          <button id="checkedNow" type="button">Mark Checked Now</button>
+        </article>
+
+        <article class="helm-card">
+          <h3>Bright Sun Rule</h3>
+          <p>Use the green/yellow/red risk state, not small notes, to make the quick call. If the display is hard to read, conditions deserve a pause too.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="today" aria-labelledby="today-title">
+      <div class="section-title">
+        <h2 id="today-title">Today's Route</h2>
+        <span class="small-note">Approximate nautical miles; verify against charts</span>
+      </div>
+
+      <div class="leg-list">
+        <article class="leg">
+          <div>
+            <strong>Boyne City / Harborage to Petoskey City Marina</strong>
+            <span>Via Lake Charlevoix, Pine River Channel, Lake Michigan, and Little Traverse Bay.</span>
+          </div>
+          <div class="distance">31 nm</div>
+        </article>
+
+        <article class="leg">
+          <div>
+            <strong>Petoskey City Marina to Mackinac Island State Harbor</strong>
+            <span>Open-water leg across northern Lake Michigan and the Straits area.</span>
+          </div>
+          <div class="distance">45 nm</div>
+        </article>
+
+        <article class="leg">
+          <div>
+            <strong>Mackinac Island State Harbor to Harrisville State Harbor</strong>
+            <span>Longest Lake Huron leg; plan alternates and fuel conservatively.</span>
+          </div>
+          <div class="distance">82 nm</div>
+        </article>
+
+        <article class="leg">
+          <div>
+            <strong>Harrisville State Harbor to East Tawas State Harbor</strong>
+            <span>Southbound Lake Huron leg into Tawas Bay.</span>
+          </div>
+          <div class="distance">28 nm</div>
+        </article>
+
+        <article class="leg">
+          <div>
+            <strong>East Tawas State Harbor to Bay City / Liberty Harbor</strong>
+            <span>Saginaw Bay and river approach; verify depths, aids, and traffic.</span>
+          </div>
+          <div class="distance">43 nm</div>
+        </article>
+
+        <div class="total-route">
+          <b>Approximate Trip Distance</b>
+          <span>229 nm</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="fuel" aria-labelledby="fuel-title">
+      <div class="section-title">
+        <h2 id="fuel-title">Fuel Planning</h2>
+        <span class="small-note">Use your vessel's real burn rate</span>
+      </div>
+
+      <div class="fuel-grid">
+        <article class="fuel-card">
+          <h3>Range Check</h3>
+          <div class="formula">Usable range = fuel aboard x nm per gallon</div>
+          <p>Plan every leg using conservative speed, loaded weight, sea state, current, and detours. The longest planned leg is about <strong>82 nm</strong>.</p>
+        </article>
+
+        <article class="fuel-card">
+          <h3>Reserve Rule</h3>
+          <div class="formula">Arrive with at least 1/3 fuel remaining</div>
+          <p>A practical Great Lakes rule is one third out, one third back or alternate, and one third reserve. Increase reserve for night, fog, strong wind, or limited fuel stops.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="risk" aria-labelledby="risk-title">
+      <div class="section-title">
+        <h2 id="risk-title">Weather Risk</h2>
+        <span class="small-note">Simple wind + wave + alert logic</span>
+      </div>
+
+      <div class="risk-grid">
+        <div class="risk-meter" id="riskMeter" data-risk="green" role="status" aria-live="polite">
+          <b>Current Risk</b>
+          <span class="risk-readout" id="riskReadout">GREEN</span>
+          <span id="riskText">Light wind, low waves, good visibility, no marine alerts.</span>
+          <div class="risk-buttons" aria-label="Set weather risk">
+            <button class="risk-button green" type="button" data-risk-choice="green">Green</button>
+            <button class="risk-button yellow" type="button" data-risk-choice="yellow">Yellow</button>
+            <button class="risk-button red" type="button" data-risk-choice="red">Red</button>
+          </div>
+        </div>
+
+        <article class="risk-card">
+          <h3>Risk Logic</h3>
+          <ul>
+            <li><strong>Green:</strong> wind 10 kt or less, waves 1 ft or less, no storms or fog.</li>
+            <li><strong>Yellow:</strong> wind 11-20 kt, waves 1-3 ft, reduced visibility, or building weather.</li>
+            <li><strong>Red:</strong> wind over 20 kt, waves over 3 ft, thunderstorms, dense fog, or any advisory.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="float-plan" aria-labelledby="float-plan-title">
+      <div class="section-title">
+        <h2 id="float-plan-title">Float Plan</h2>
+        <span class="small-note">Leave this with a reliable shore contact</span>
+      </div>
+
+      <div class="emergency-banner" id="emergency">
+        <b>Emergency VHF: Channel 16</b>
+        <span>Use Channel 16 for distress, urgency, and hailing. Keep a working radio within reach at the helm.</span>
+      </div>
+
+      <div class="float-plan" style="margin-top: 12px;">
+        <div class="plan-field"><b>Vessel</b><span>Name, registration, length, color, MMSI</span></div>
+        <div class="plan-field"><b>People Aboard</b><span>Names, phone numbers, medical concerns</span></div>
+        <div class="plan-field"><b>Route</b><span>Planned leg, alternates, and destination marina</span></div>
+        <div class="plan-field"><b>Timing</b><span>Departure, check-in points, ETA, overdue time</span></div>
+        <div class="plan-field"><b>Comms</b><span>VHF, cell phones, tracker, emergency contacts</span></div>
+        <div class="plan-field"><b>Action If Overdue</b><span>Who to call first, then marina, Coast Guard, or 911</span></div>
+      </div>
+
+      <article class="print-card" style="margin-top: 12px;">
+        <h3>Print / Save Float Plan</h3>
+        <p>Use this area for the copy you send or print for your shore contact. The print button hides the rest of the dashboard.</p>
+        <label class="form-label">Float Plan Notes
+          <textarea id="floatPlanNotes" placeholder="Vessel, crew, planned stops, ETAs, alternates, overdue action, and contact numbers."></textarea>
+        </label>
+        <button id="printFloatPlan" type="button" style="margin-top: 10px;">Print / Save PDF</button>
+      </article>
+    </section>
+
+    <section id="route" aria-labelledby="route-title">
+      <div class="section-title">
+        <h2 id="route-title">Route Stops</h2>
+        <span class="small-note">Coordinates in degrees + minutes</span>
+      </div>
+
+      <div class="route">
+        <article class="stop">
+          <div class="stop-number">1</div>
+          <div>
+            <h3>Boyne City / Harborage Marina</h3>
+            <div class="coords">
+              <span>45° 12.6' N</span>
+              <span>85° 01.2' W</span>
+            </div>
+            <div class="meta-row">
+              <span class="pill">Lake Charlevoix</span>
+              <span class="pill">Start</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="stop">
+          <div class="stop-number">2</div>
+          <div>
+            <h3>Petoskey City Marina</h3>
+            <div class="coords">
+              <span>45° 22.9' N</span>
+              <span>84° 57.7' W</span>
+            </div>
+            <div class="meta-row">
+              <span class="pill">Little Traverse Bay</span>
+              <span class="pill">VHF 16</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="stop">
+          <div class="stop-number">3</div>
+          <div>
+            <h3>Mackinac Island State Harbor</h3>
+            <div class="coords">
+              <span>45° 51.0' N</span>
+              <span>84° 36.9' W</span>
+            </div>
+            <div class="meta-row">
+              <span class="pill">Straits</span>
+              <span class="pill">VHF 9</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="stop">
+          <div class="stop-number">4</div>
+          <div>
+            <h3>Harrisville State Harbor</h3>
+            <div class="coords">
+              <span>44° 39.7' N</span>
+              <span>83° 16.8' W</span>
+            </div>
+            <div class="meta-row">
+              <span class="pill">Lake Huron</span>
+              <span class="pill">VHF 9 / 16</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="stop">
+          <div class="stop-number">5</div>
+          <div>
+            <h3>East Tawas State Harbor</h3>
+            <div class="coords">
+              <span>44° 16.6' N</span>
+              <span>83° 29.1' W</span>
+            </div>
+            <div class="meta-row">
+              <span class="pill">Tawas Bay</span>
+              <span class="pill">VHF 9 / 16</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="stop">
+          <div class="stop-number">6</div>
+          <div>
+            <h3>Bay City / Liberty Harbor</h3>
+            <div class="coords">
+              <span>43° 40.8' N</span>
+              <span>83° 49.5' W</span>
+            </div>
+            <div class="meta-row">
+              <span class="pill">Saginaw Bay</span>
+              <span class="pill">Destination</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="weather" aria-labelledby="weather-title">
+      <div class="section-title">
+        <h2 id="weather-title">Weather Placeholders</h2>
+        <span class="small-note">Fill from NOAA, marina, or preferred forecast source</span>
+      </div>
+
+      <article class="log-card" style="margin-bottom: 12px;">
+        <h3>Manual Weather Log</h3>
+        <div class="log-grid">
+          <label class="form-label">Time
+            <input id="weatherTime" type="text" placeholder="0930">
+          </label>
+          <label class="form-label">Location
+            <input id="weatherLocation" type="text" placeholder="Petoskey / offshore">
+          </label>
+          <label class="form-label">Wind
+            <input id="weatherWind" type="text" placeholder="12 kt NW">
+          </label>
+          <label class="form-label">Waves
+            <input id="weatherWaves" type="text" placeholder="1-2 ft">
+          </label>
+          <label class="form-label">Visibility
+            <input id="weatherVisibility" type="text" placeholder="Clear / haze / fog">
+          </label>
+          <label class="form-label">Risk
+            <select id="weatherRisk">
+              <option>Green</option>
+              <option>Yellow</option>
+              <option>Red</option>
+            </select>
+          </label>
+        </div>
+        <label class="form-label" style="margin-top: 10px;">Notes
+          <textarea id="weatherNotes" placeholder="Radar, clouds, barometer, crew condition, alternate decision."></textarea>
+        </label>
+      </article>
+
+      <div class="weather-grid">
+        <article class="weather">
+          <h3>Boyne City / Harborage</h3>
+          <div class="fields">
+            <div class="field"><b>Wind</b><span>____ kt / ____ dir</span></div>
+            <div class="field"><b>Waves</b><span>____ ft</span></div>
+            <div class="field"><b>Visibility</b><span>____ nm</span></div>
+            <div class="field"><b>Notes</b><span>____________</span></div>
+          </div>
+        </article>
+
+        <article class="weather">
+          <h3>Petoskey</h3>
+          <div class="fields">
+            <div class="field"><b>Wind</b><span>____ kt / ____ dir</span></div>
+            <div class="field"><b>Waves</b><span>____ ft</span></div>
+            <div class="field"><b>Visibility</b><span>____ nm</span></div>
+            <div class="field"><b>Notes</b><span>____________</span></div>
+          </div>
+        </article>
+
+        <article class="weather">
+          <h3>Mackinac Island</h3>
+          <div class="fields">
+            <div class="field"><b>Wind</b><span>____ kt / ____ dir</span></div>
+            <div class="field"><b>Waves</b><span>____ ft</span></div>
+            <div class="field"><b>Visibility</b><span>____ nm</span></div>
+            <div class="field"><b>Notes</b><span>____________</span></div>
+          </div>
+        </article>
+
+        <article class="weather">
+          <h3>Harrisville</h3>
+          <div class="fields">
+            <div class="field"><b>Wind</b><span>____ kt / ____ dir</span></div>
+            <div class="field"><b>Waves</b><span>____ ft</span></div>
+            <div class="field"><b>Visibility</b><span>____ nm</span></div>
+            <div class="field"><b>Notes</b><span>____________</span></div>
+          </div>
+        </article>
+
+        <article class="weather">
+          <h3>East Tawas</h3>
+          <div class="fields">
+            <div class="field"><b>Wind</b><span>____ kt / ____ dir</span></div>
+            <div class="field"><b>Waves</b><span>____ ft</span></div>
+            <div class="field"><b>Visibility</b><span>____ nm</span></div>
+            <div class="field"><b>Notes</b><span>____________</span></div>
+          </div>
+        </article>
+
+        <article class="weather">
+          <h3>Bay City</h3>
+          <div class="fields">
+            <div class="field"><b>Wind</b><span>____ kt / ____ dir</span></div>
+            <div class="field"><b>Waves</b><span>____ ft</span></div>
+            <div class="field"><b>Visibility</b><span>____ nm</span></div>
+            <div class="field"><b>Notes</b><span>____________</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="conditions" aria-labelledby="conditions-title">
+      <div class="section-title">
+        <h2 id="conditions-title">Go / No-Go Conditions</h2>
+        <span class="small-note">Adjust thresholds for vessel, crew, and route leg</span>
+      </div>
+
+      <div class="conditions">
+        <article class="condition go">
+          <h3>Go</h3>
+          <ul>
+            <li>Forecast stable for full leg plus reserve.</li>
+            <li>Wind and waves inside vessel limits.</li>
+            <li>Visibility, fuel, crew, and daylight all acceptable.</li>
+          </ul>
+        </article>
+
+        <article class="condition caution">
+          <h3>Caution</h3>
+          <ul>
+            <li>Building wind, steep chop, storms nearby, or fog possible.</li>
+            <li>Alternate harbor identified and reachable.</li>
+            <li>Recheck forecast before departure and underway.</li>
+          </ul>
+        </article>
+
+        <article class="condition no-go">
+          <h3>No-Go</h3>
+          <ul>
+            <li>Small Craft Advisory or worse for the leg.</li>
+            <li>Thunderstorms, dense fog, unsafe seas, or crew concern.</li>
+            <li>Mechanical, navigation, fuel, or communication issue unresolved.</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="warning-panel" style="margin-top: 12px;">
+        <h3>Stop and Reassess</h3>
+        <ul>
+          <li>Turn back, divert, or hold position if wind, waves, fog, storms, fuel burn, crew condition, or mechanical behavior changes faster than expected.</li>
+          <li>Do not press a long open-water leg because a slip is reserved or the schedule is tight.</li>
+          <li>If any essential system is questionable, the decision is no-go until it is understood and fixed.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="safety" aria-labelledby="safety-title">
+      <div class="section-title">
+        <h2 id="safety-title">Pre-Departure Go / No-Go Checklist</h2>
+        <span class="small-note">Any unchecked critical item means delay departure</span>
+      </div>
+
+      <div class="checklist">
+        <label class="check"><input type="checkbox"><span>Weather, marine forecast, radar, and alerts checked.</span></label>
+        <label class="check"><input type="checkbox"><span>Float plan filed with route, ETAs, crew, and contact numbers.</span></label>
+        <label class="check"><input type="checkbox"><span>Life jackets accessible and correct sizes for all aboard.</span></label>
+        <label class="check"><input type="checkbox"><span>VHF radio tested on working channel; Channel 16 monitored for emergencies.</span></label>
+        <label class="check"><input type="checkbox"><span>Navigation lights, horn, compass/GPS, paper or offline charts, and route reviewed.</span></label>
+        <label class="check"><input type="checkbox"><span>Fuel plan confirmed with reserve for delays or diversion.</span></label>
+        <label class="check"><input type="checkbox"><span>Charts, route, hazards, bridges, and alternate harbors reviewed.</span></label>
+        <label class="check"><input type="checkbox"><span>Throwable device, flares/signals, first aid, fire extinguishers ready.</span></label>
+        <label class="check"><input type="checkbox"><span>Dock lines, fenders, anchor, tool kit, and spare parts ready.</span></label>
+        <label class="check"><input type="checkbox"><span>Crew briefing complete: roles, man-overboard, radio, and emergency plan.</span></label>
+      </div>
+
+      <div class="checklist-group">
+        <h3>Bilge, Engine Room, Batteries</h3>
+        <label class="check"><input type="checkbox"><span>Bilge clean enough to inspect; no unusual water, oil, fuel, or coolant present.</span></label>
+        <label class="check"><input type="checkbox"><span>Bilge pumps and float switches tested; high-water alarm working if installed.</span></label>
+        <label class="check"><input type="checkbox"><span>Engine room inspected: belts, hoses, clamps, strainers, fluids, leaks, and odors checked.</span></label>
+        <label class="check"><input type="checkbox"><span>Batteries secured, terminals tight, selector set correctly, house/start voltage acceptable.</span></label>
+      </div>
+
+      <div class="checklist-group">
+        <h3>Seacocks and Blower</h3>
+        <label class="check"><input type="checkbox"><span>Seacocks checked in correct positions; handles accessible; crew knows emergency closures.</span></label>
+        <label class="check"><input type="checkbox"><span>Raw-water intake open before engine start; cooling water flow confirmed after start.</span></label>
+        <label class="check"><input type="checkbox"><span>Gasoline engine blower run before start and after fueling; sniff test clear of fuel vapor.</span></label>
+        <label class="check"><input type="checkbox"><span>Fuel shutoffs, fire extinguishers, and engine shutdown procedure reviewed.</span></label>
+      </div>
+    </section>
+
+    <section aria-labelledby="reference-title">
+      <div class="section-title">
+        <h2 id="reference-title">Reference</h2>
+      </div>
+      <div class="reference">
+        <p>Dashboard is a planning aid, not a navigation chart. Confirm all coordinates, depths, hazards, bridge conditions, Notices to Mariners, and weather before departure.</p>
+      </div>
+    </section>
+  </main>
+  <nav class="bottom-nav" aria-label="Primary helm navigation">
+    <a href="#weather">Check</a>
+    <a href="#decision">Decide</a>
+    <a href="#quick-actions">Help</a>
+    <a href="#safety">Safety</a>
+    <a class="emergency-link" href="#emergency">Emergency</a>
+  </nav>
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var modeToggle = document.getElementById("modeToggle");
+      var resetDashboard = document.getElementById("resetDashboard");
+      var checkedNow = document.getElementById("checkedNow");
+      var lastChecked = document.getElementById("lastChecked");
+      var printFloatPlan = document.getElementById("printFloatPlan");
+      var decisionPanel = document.getElementById("decisionPanel");
+      var decisionLabel = document.getElementById("decisionLabel");
+      var decisionDetail = document.getElementById("decisionDetail");
+      var decisionUpdated = document.getElementById("decisionUpdated");
+      var decisionWind = document.getElementById("decisionWind");
+      var decisionWaves = document.getElementById("decisionWaves");
+      var decisionVisibility = document.getElementById("decisionVisibility");
+      var decisionReason = document.getElementById("decisionReason");
+      var emergencyContactLink = document.getElementById("emergencyContactLink");
+      var emergencyContactNumber = document.getElementById("emergencyContactNumber");
+      var savedTheme = null;
+      var savedCheck = null;
+      var savedDecision = null;
+      var savedEmergencyContact = null;
+      var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+      try {
+        savedTheme = localStorage.getItem("helm-theme");
+        savedCheck = localStorage.getItem("helm-last-checked");
+        savedDecision = JSON.parse(localStorage.getItem("helm-decision") || "null");
+        savedEmergencyContact = localStorage.getItem("helm-emergency-contact");
+      } catch (error) {
+        savedTheme = null;
+        savedCheck = null;
+        savedDecision = null;
+        savedEmergencyContact = null;
+      }
+
+      var startTheme = savedTheme || (prefersDark ? "dark" : "light");
+
+      function setTheme(theme) {
+        root.setAttribute("data-theme", theme);
+        var isDark = theme === "dark";
+        modeToggle.textContent = isDark ? "Light Mode" : "Dark Mode";
+        modeToggle.setAttribute("aria-pressed", String(isDark));
+        try {
+          localStorage.setItem("helm-theme", theme);
+        } catch (error) {
+          return;
+        }
+      }
+
+      setTheme(startTheme);
+
+      modeToggle.addEventListener("click", function () {
+        var nextTheme = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        setTheme(nextTheme);
+      });
+
+      function storageSet(key, value) {
+        try {
+          localStorage.setItem(key, value);
+        } catch (error) {
+          return;
+        }
+      }
+
+      function storageGet(key) {
+        try {
+          return localStorage.getItem(key);
+        } catch (error) {
+          return null;
+        }
+      }
+
+      function formatCheckedTime(date) {
+        return date.toLocaleString([], {
+          month: "short",
+          day: "numeric",
+          hour: "numeric",
+          minute: "2-digit"
+        });
+      }
+
+      if (savedCheck) {
+        lastChecked.textContent = savedCheck;
+      }
+
+      checkedNow.addEventListener("click", function () {
+        var stamp = formatCheckedTime(new Date());
+        lastChecked.textContent = stamp;
+        try {
+          localStorage.setItem("helm-last-checked", stamp);
+        } catch (error) {
+          return;
+        }
+      });
+
+      printFloatPlan.addEventListener("click", function () {
+        window.print();
+      });
+
+      function updateEmergencyContact(value) {
+        var cleanValue = (value || "").trim();
+        emergencyContactNumber.value = cleanValue;
+        emergencyContactLink.setAttribute("href", cleanValue ? "tel:" + cleanValue : "tel:");
+        emergencyContactLink.textContent = cleanValue ? "Call Emergency Contact" : "Add Emergency Contact";
+        try {
+          localStorage.setItem("helm-emergency-contact", cleanValue);
+        } catch (error) {
+          return;
+        }
+      }
+
+      updateEmergencyContact(savedEmergencyContact || "");
+
+      emergencyContactNumber.addEventListener("input", function () {
+        updateEmergencyContact(emergencyContactNumber.value);
+      });
+
+      function formatDecisionTime(date) {
+        return date.toLocaleString([], {
+          month: "short",
+          day: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+          second: "2-digit"
+        });
+      }
+
+      function decisionCopy(decision, source) {
+        if (decision === "red") {
+          return source + ": no-go threshold reached.";
+        }
+
+        if (decision === "yellow") {
+          return source + ": caution range. Slow down, reassess, and identify alternates.";
+        }
+
+        return source + ": safe range currently indicated.";
+      }
+
+      function setDecision(decision, source, saveInputs) {
+        var labels = {
+          green: "GO",
+          yellow: "CAUTION",
+          red: "NO-GO"
+        };
+        var stamp = formatDecisionTime(new Date());
+        decisionPanel.setAttribute("data-decision", decision);
+        decisionLabel.textContent = labels[decision];
+        decisionDetail.textContent = decisionCopy(decision, source);
+        decisionUpdated.textContent = "Updated " + stamp;
+
+        try {
+          localStorage.setItem("helm-decision", JSON.stringify({
+            decision: decision,
+            detail: decisionDetail.textContent,
+            updated: decisionUpdated.textContent,
+            wind: saveInputs ? decisionWind.value : "",
+            waves: saveInputs ? decisionWaves.value : "",
+            visibility: saveInputs ? decisionVisibility.value : "",
+            reason: decisionReason.value
+          }));
+        } catch (error) {
+          return;
+        }
+      }
+
+      function numberFromInput(input) {
+        var value = parseFloat(input.value);
+        return Number.isFinite(value) ? value : null;
+      }
+
+      function evaluateDecision() {
+        var wind = numberFromInput(decisionWind);
+        var waves = numberFromInput(decisionWaves);
+        var visibility = numberFromInput(decisionVisibility);
+        var hasAnyValue = wind !== null || waves !== null || visibility !== null;
+
+        if (!hasAnyValue) {
+          return;
+        }
+
+        if ((wind !== null && wind > 20) || (waves !== null && waves > 3) || (visibility !== null && visibility < 2)) {
+          setDecision("red", "Automatic threshold", true);
+          return;
+        }
+
+        if ((wind !== null && wind > 10) || (waves !== null && waves > 1) || (visibility !== null && visibility < 5)) {
+          setDecision("yellow", "Automatic threshold", true);
+          return;
+        }
+
+        setDecision("green", "Automatic threshold", true);
+      }
+
+      if (savedDecision) {
+        decisionPanel.setAttribute("data-decision", savedDecision.decision || "green");
+        decisionLabel.textContent = savedDecision.decision === "red" ? "NO-GO" : savedDecision.decision === "yellow" ? "CAUTION" : "GO";
+        decisionDetail.textContent = savedDecision.detail || decisionDetail.textContent;
+        decisionUpdated.textContent = savedDecision.updated || decisionUpdated.textContent;
+        decisionWind.value = savedDecision.wind || "";
+        decisionWaves.value = savedDecision.waves || "";
+        decisionVisibility.value = savedDecision.visibility || "";
+        decisionReason.value = savedDecision.reason || "";
+      }
+
+      document.querySelectorAll("[data-decision-choice]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          setDecision(button.getAttribute("data-decision-choice"), "Manual selection", true);
+        });
+      });
+
+      [decisionWind, decisionWaves, decisionVisibility].forEach(function (input) {
+        input.addEventListener("input", evaluateDecision);
+      });
+
+      decisionReason.addEventListener("input", function () {
+        var currentDecision = decisionPanel.getAttribute("data-decision") || "green";
+        setDecision(currentDecision, "Reason updated", true);
+      });
+
+      var riskMeter = document.getElementById("riskMeter");
+      var riskReadout = document.getElementById("riskReadout");
+      var riskText = document.getElementById("riskText");
+      var riskMessages = {
+        green: "Light wind, low waves, good visibility, no marine alerts.",
+        yellow: "Marginal conditions. Recheck forecast, identify alternates, and reduce exposure.",
+        red: "Do not depart until the risk source clears and the forecast improves."
+      };
+
+      document.querySelectorAll("[data-risk-choice]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          var risk = button.getAttribute("data-risk-choice");
+          riskMeter.setAttribute("data-risk", risk);
+          riskReadout.textContent = risk.toUpperCase();
+          riskText.textContent = riskMessages[risk];
+        });
+      });
+
+      function persistEditableFields() {
+        document.querySelectorAll("input, textarea, select").forEach(function (field, index) {
+          if (field.type === "checkbox") {
+            return;
+          }
+
+          var key = "helm-field-" + (field.id || field.name || index);
+          var savedValue = storageGet(key);
+
+          if (savedValue !== null && field.id !== "emergencyContactNumber") {
+            field.value = savedValue;
+          }
+
+          field.addEventListener("input", function () {
+            storageSet(key, field.value);
+          });
+
+          field.addEventListener("change", function () {
+            storageSet(key, field.value);
+          });
+        });
+
+        document.querySelectorAll('input[type="checkbox"]').forEach(function (box, index) {
+          var key = "helm-checklist-" + index;
+          var savedValue = storageGet(key);
+
+          if (savedValue !== null) {
+            box.checked = savedValue === "true";
+          }
+
+          box.addEventListener("change", function () {
+            storageSet(key, String(box.checked));
+          });
+        });
+      }
+
+      persistEditableFields();
+
+      resetDashboard.addEventListener("click", function () {
+        var confirmed = window.confirm("Reset saved dashboard fields, decision, contact, and checklist?");
+
+        if (!confirmed) {
+          return;
+        }
+
+        try {
+          Object.keys(localStorage).forEach(function (key) {
+            if (key.indexOf("helm-") === 0) {
+              localStorage.removeItem(key);
+            }
+          });
+        } catch (error) {
+          return;
+        }
+
+        document.querySelectorAll("input, textarea, select").forEach(function (field) {
+          if (field.type === "checkbox") {
+            field.checked = false;
+          } else if (field.tagName === "SELECT") {
+            field.selectedIndex = 0;
+          } else {
+            field.value = "";
+          }
+        });
+
+        setTheme("light");
+        lastChecked.textContent = "Not checked this session";
+        updateEmergencyContact("");
+        decisionPanel.setAttribute("data-decision", "green");
+        decisionLabel.textContent = "GO";
+        decisionDetail.textContent = "Safe range entered or manual GO selected.";
+        decisionUpdated.textContent = "Decision not updated this session";
+        riskMeter.setAttribute("data-risk", "green");
+        riskReadout.textContent = "GREEN";
+        riskText.textContent = riskMessages.green;
+      });
+    })();
+  </script>
+</body>
+</html>
