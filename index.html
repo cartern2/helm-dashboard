@@ -704,6 +704,33 @@
       font-weight: 900;
     }
 
+    .wind-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 42px;
+      padding: 8px 12px;
+      border: 3px solid var(--blue);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--navy);
+      font-size: 1.04rem;
+      font-weight: 1000;
+    }
+
+    .wind-interpretation {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      margin-top: 8px;
+      padding: 6px 10px;
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      background: var(--aqua);
+      color: var(--ink);
+      font-size: 0.9rem;
+      font-weight: 900;
+    }
+
     .weather-grid {
       display: grid;
       gap: 12px;
@@ -722,6 +749,53 @@
       font-size: 1.14rem;
       background: #eef7f9;
       border-bottom: 1px solid var(--line);
+    }
+
+    .noaa-tools {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .noaa-card-actions {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .copy-confirmation {
+      min-height: 24px;
+      color: var(--green);
+      font-size: 0.92rem;
+      font-weight: 900;
+    }
+
+    .noaa-status {
+      min-height: 46px;
+      padding: 10px 12px;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      background: var(--aqua);
+      color: var(--ink);
+      font-weight: 900;
+    }
+
+    .marine-warning {
+      padding: 12px;
+      border: 3px solid var(--amber);
+      border-radius: 8px;
+      background: #fff9e8;
+      color: #4a3100;
+      font-weight: 900;
+    }
+
+    .weather-period {
+      display: block;
+      padding: 12px 14px 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 900;
     }
 
     .fields {
@@ -750,6 +824,12 @@
     .field span {
       color: var(--muted);
       font-weight: 750;
+    }
+
+    .field span.loaded {
+      color: var(--ink);
+      font-size: 1.08rem;
+      font-weight: 950;
     }
 
     .conditions {
@@ -1057,6 +1137,11 @@
       background: #0b202b;
     }
 
+    html[data-theme="dark"] .marine-warning {
+      background: #2a2007;
+      color: #fff4cc;
+    }
+
     html[data-theme="dark"] .risk-meter {
       background: #082116;
       color: #e8fff5;
@@ -1135,6 +1220,11 @@
       color: var(--ink);
     }
 
+    html[data-theme="dark"] .wind-badge {
+      background: var(--panel);
+      color: var(--ink);
+    }
+
     html[data-theme="dark"] .action-link.primary,
     html[data-theme="dark"] .action-link.warning {
       color: #fff;
@@ -1203,7 +1293,7 @@
         </div>
         <div class="status">
           <b>Primary Check</b>
-          <span>Wind + waves</span>
+          <span>Wind (MPH)</span>
         </div>
       </div>
     </div>
@@ -1232,7 +1322,7 @@
       <div class="captain-flow">
         <a class="flow-action" href="#weather">
           <b>1</b>
-          <span><strong>Check Conditions</strong>Wind, waves, visibility, notes.</span>
+          <span><strong>Check Conditions</strong>Wind (MPH), waves, visibility, notes.</span>
         </a>
         <a class="flow-action" href="#decision">
           <b>2</b>
@@ -1266,8 +1356,21 @@
           </div>
 
           <div class="quick-inputs">
-            <label class="form-label">Wind kt
+            <label class="form-label">Current area
+              <input id="decisionLocation" type="text" placeholder="Petoskey / offshore">
+            </label>
+            <label class="form-label">Wind direction
+              <input id="decisionWindDirection" type="text" placeholder="NW">
+            </label>
+            <label class="form-label">Temperature
+              <input id="decisionTemperature" type="text" placeholder="68°F">
+            </label>
+          </div>
+
+          <div class="quick-inputs">
+            <label class="form-label">Wind (MPH)
               <input id="decisionWind" type="number" inputmode="decimal" min="0" step="1" placeholder="10">
+              <span class="wind-interpretation" id="decisionWindMeaning">Wind feel: enter MPH</span>
             </label>
             <label class="form-label">Waves ft
               <input id="decisionWaves" type="number" inputmode="decimal" min="0" step="0.5" placeholder="1">
@@ -1278,7 +1381,7 @@
           </div>
 
           <label class="form-label">Reason for decision
-            <textarea id="decisionReason" placeholder="Example: 12 kt NW, 1-2 ft, clear visibility, crew comfortable."></textarea>
+            <textarea id="decisionReason" placeholder="Example: 12 mph NW, 1-2 ft, clear visibility, crew comfortable."></textarea>
           </label>
         </div>
       </div>
@@ -1427,9 +1530,9 @@
         <article class="risk-card">
           <h3>Risk Logic</h3>
           <ul>
-            <li><strong>Green:</strong> wind 10 kt or less, waves 1 ft or less, no storms or fog.</li>
-            <li><strong>Yellow:</strong> wind 11-20 kt, waves 1-3 ft, reduced visibility, or building weather.</li>
-            <li><strong>Red:</strong> wind over 20 kt, waves over 3 ft, thunderstorms, dense fog, or any advisory.</li>
+            <li><strong>Green:</strong> wind 10 mph or less, waves 1 ft or less, no storms or fog.</li>
+            <li><strong>Yellow:</strong> wind 11-20 mph, waves 1-3 ft, reduced visibility, or building weather.</li>
+            <li><strong>Red:</strong> wind over 20 mph, waves over 3 ft, thunderstorms, dense fog, or any advisory.</li>
           </ul>
         </article>
       </div>
@@ -1481,6 +1584,7 @@
               <span>85° 01.2' W</span>
             </div>
             <div class="meta-row">
+              <span class="wind-badge" data-route-wind="boyne">Wind (MPH): ____</span>
               <span class="pill">Lake Charlevoix</span>
               <span class="pill">Start</span>
             </div>
@@ -1496,6 +1600,7 @@
               <span>84° 57.7' W</span>
             </div>
             <div class="meta-row">
+              <span class="wind-badge" data-route-wind="petoskey">Wind (MPH): ____</span>
               <span class="pill">Little Traverse Bay</span>
               <span class="pill">VHF 16</span>
             </div>
@@ -1511,6 +1616,7 @@
               <span>84° 36.9' W</span>
             </div>
             <div class="meta-row">
+              <span class="wind-badge" data-route-wind="mackinac">Wind (MPH): ____</span>
               <span class="pill">Straits</span>
               <span class="pill">VHF 9</span>
             </div>
@@ -1526,6 +1632,7 @@
               <span>83° 16.8' W</span>
             </div>
             <div class="meta-row">
+              <span class="wind-badge" data-route-wind="harrisville">Wind (MPH): ____</span>
               <span class="pill">Lake Huron</span>
               <span class="pill">VHF 9 / 16</span>
             </div>
@@ -1541,6 +1648,7 @@
               <span>83° 29.1' W</span>
             </div>
             <div class="meta-row">
+              <span class="wind-badge" data-route-wind="east-tawas">Wind (MPH): ____</span>
               <span class="pill">Tawas Bay</span>
               <span class="pill">VHF 9 / 16</span>
             </div>
@@ -1556,6 +1664,7 @@
               <span>83° 49.5' W</span>
             </div>
             <div class="meta-row">
+              <span class="wind-badge" data-route-wind="bay-city">Wind (MPH): ____</span>
               <span class="pill">Saginaw Bay</span>
               <span class="pill">Destination</span>
             </div>
@@ -1566,8 +1675,14 @@
 
     <section id="weather" aria-labelledby="weather-title">
       <div class="section-title">
-        <h2 id="weather-title">Weather Placeholders</h2>
-        <span class="small-note">Fill from NOAA, marina, or preferred forecast source</span>
+        <h2 id="weather-title">NOAA Weather</h2>
+        <span class="small-note">Free National Weather Service forecast data</span>
+      </div>
+
+      <div class="noaa-tools">
+        <button id="refreshNoaaWeather" type="button">Refresh NOAA Weather</button>
+        <div class="noaa-status" id="noaaStatus" role="status" aria-live="polite">NOAA weather not loaded yet.</div>
+        <div class="marine-warning">Verify marine conditions separately with the NOAA marine forecast, buoy reports, radar, and what you can see from the helm.</div>
       </div>
 
       <article class="log-card" style="margin-bottom: 12px;">
@@ -1579,8 +1694,9 @@
           <label class="form-label">Location
             <input id="weatherLocation" type="text" placeholder="Petoskey / offshore">
           </label>
-          <label class="form-label">Wind
-            <input id="weatherWind" type="text" placeholder="12 kt NW">
+          <label class="form-label">Wind (MPH)
+            <input id="weatherWind" type="text" placeholder="10 to 15 mph NW">
+            <span class="wind-interpretation" id="weatherWindMeaning">Wind feel: enter MPH</span>
           </label>
           <label class="form-label">Waves
             <input id="weatherWaves" type="text" placeholder="1-2 ft">
@@ -1601,64 +1717,106 @@
         </label>
       </article>
 
-      <div class="weather-grid">
-        <article class="weather">
+      <div class="weather-grid" id="noaaWeatherGrid">
+        <article class="weather" data-noaa-stop="boyne">
           <h3>Boyne City / Harborage</h3>
+          <span class="weather-period" data-weather-field="period">Next forecast: --</span>
           <div class="fields">
-            <div class="field"><b>Wind</b><span>____ kt / ____ dir</span></div>
-            <div class="field"><b>Waves</b><span>____ ft</span></div>
-            <div class="field"><b>Visibility</b><span>____ nm</span></div>
-            <div class="field"><b>Notes</b><span>____________</span></div>
+            <div class="field"><b>Temperature</b><span data-weather-field="temperature">--</span></div>
+            <div class="field"><b>Wind (MPH)</b><span data-weather-field="wind">--</span></div>
+            <div class="field"><b>Wind Direction</b><span data-weather-field="windDirection">--</span></div>
+            <div class="field"><b>Short Forecast</b><span data-weather-field="shortForecast">--</span></div>
+            <div class="field"><b>Last Updated</b><span data-weather-field="updated">--</span></div>
+            <div class="field"><b>Status</b><span data-weather-field="status">Ready</span></div>
+          </div>
+          <div class="noaa-card-actions">
+            <button type="button" data-use-noaa="boyne">Use for Decision</button>
+            <span class="copy-confirmation" data-copy-confirmation></span>
           </div>
         </article>
 
-        <article class="weather">
+        <article class="weather" data-noaa-stop="petoskey">
           <h3>Petoskey</h3>
+          <span class="weather-period" data-weather-field="period">Next forecast: --</span>
           <div class="fields">
-            <div class="field"><b>Wind</b><span>____ kt / ____ dir</span></div>
-            <div class="field"><b>Waves</b><span>____ ft</span></div>
-            <div class="field"><b>Visibility</b><span>____ nm</span></div>
-            <div class="field"><b>Notes</b><span>____________</span></div>
+            <div class="field"><b>Temperature</b><span data-weather-field="temperature">--</span></div>
+            <div class="field"><b>Wind (MPH)</b><span data-weather-field="wind">--</span></div>
+            <div class="field"><b>Wind Direction</b><span data-weather-field="windDirection">--</span></div>
+            <div class="field"><b>Short Forecast</b><span data-weather-field="shortForecast">--</span></div>
+            <div class="field"><b>Last Updated</b><span data-weather-field="updated">--</span></div>
+            <div class="field"><b>Status</b><span data-weather-field="status">Ready</span></div>
+          </div>
+          <div class="noaa-card-actions">
+            <button type="button" data-use-noaa="petoskey">Use for Decision</button>
+            <span class="copy-confirmation" data-copy-confirmation></span>
           </div>
         </article>
 
-        <article class="weather">
+        <article class="weather" data-noaa-stop="mackinac">
           <h3>Mackinac Island</h3>
+          <span class="weather-period" data-weather-field="period">Next forecast: --</span>
           <div class="fields">
-            <div class="field"><b>Wind</b><span>____ kt / ____ dir</span></div>
-            <div class="field"><b>Waves</b><span>____ ft</span></div>
-            <div class="field"><b>Visibility</b><span>____ nm</span></div>
-            <div class="field"><b>Notes</b><span>____________</span></div>
+            <div class="field"><b>Temperature</b><span data-weather-field="temperature">--</span></div>
+            <div class="field"><b>Wind (MPH)</b><span data-weather-field="wind">--</span></div>
+            <div class="field"><b>Wind Direction</b><span data-weather-field="windDirection">--</span></div>
+            <div class="field"><b>Short Forecast</b><span data-weather-field="shortForecast">--</span></div>
+            <div class="field"><b>Last Updated</b><span data-weather-field="updated">--</span></div>
+            <div class="field"><b>Status</b><span data-weather-field="status">Ready</span></div>
+          </div>
+          <div class="noaa-card-actions">
+            <button type="button" data-use-noaa="mackinac">Use for Decision</button>
+            <span class="copy-confirmation" data-copy-confirmation></span>
           </div>
         </article>
 
-        <article class="weather">
+        <article class="weather" data-noaa-stop="harrisville">
           <h3>Harrisville</h3>
+          <span class="weather-period" data-weather-field="period">Next forecast: --</span>
           <div class="fields">
-            <div class="field"><b>Wind</b><span>____ kt / ____ dir</span></div>
-            <div class="field"><b>Waves</b><span>____ ft</span></div>
-            <div class="field"><b>Visibility</b><span>____ nm</span></div>
-            <div class="field"><b>Notes</b><span>____________</span></div>
+            <div class="field"><b>Temperature</b><span data-weather-field="temperature">--</span></div>
+            <div class="field"><b>Wind (MPH)</b><span data-weather-field="wind">--</span></div>
+            <div class="field"><b>Wind Direction</b><span data-weather-field="windDirection">--</span></div>
+            <div class="field"><b>Short Forecast</b><span data-weather-field="shortForecast">--</span></div>
+            <div class="field"><b>Last Updated</b><span data-weather-field="updated">--</span></div>
+            <div class="field"><b>Status</b><span data-weather-field="status">Ready</span></div>
+          </div>
+          <div class="noaa-card-actions">
+            <button type="button" data-use-noaa="harrisville">Use for Decision</button>
+            <span class="copy-confirmation" data-copy-confirmation></span>
           </div>
         </article>
 
-        <article class="weather">
+        <article class="weather" data-noaa-stop="east-tawas">
           <h3>East Tawas</h3>
+          <span class="weather-period" data-weather-field="period">Next forecast: --</span>
           <div class="fields">
-            <div class="field"><b>Wind</b><span>____ kt / ____ dir</span></div>
-            <div class="field"><b>Waves</b><span>____ ft</span></div>
-            <div class="field"><b>Visibility</b><span>____ nm</span></div>
-            <div class="field"><b>Notes</b><span>____________</span></div>
+            <div class="field"><b>Temperature</b><span data-weather-field="temperature">--</span></div>
+            <div class="field"><b>Wind (MPH)</b><span data-weather-field="wind">--</span></div>
+            <div class="field"><b>Wind Direction</b><span data-weather-field="windDirection">--</span></div>
+            <div class="field"><b>Short Forecast</b><span data-weather-field="shortForecast">--</span></div>
+            <div class="field"><b>Last Updated</b><span data-weather-field="updated">--</span></div>
+            <div class="field"><b>Status</b><span data-weather-field="status">Ready</span></div>
+          </div>
+          <div class="noaa-card-actions">
+            <button type="button" data-use-noaa="east-tawas">Use for Decision</button>
+            <span class="copy-confirmation" data-copy-confirmation></span>
           </div>
         </article>
 
-        <article class="weather">
+        <article class="weather" data-noaa-stop="bay-city">
           <h3>Bay City</h3>
+          <span class="weather-period" data-weather-field="period">Next forecast: --</span>
           <div class="fields">
-            <div class="field"><b>Wind</b><span>____ kt / ____ dir</span></div>
-            <div class="field"><b>Waves</b><span>____ ft</span></div>
-            <div class="field"><b>Visibility</b><span>____ nm</span></div>
-            <div class="field"><b>Notes</b><span>____________</span></div>
+            <div class="field"><b>Temperature</b><span data-weather-field="temperature">--</span></div>
+            <div class="field"><b>Wind (MPH)</b><span data-weather-field="wind">--</span></div>
+            <div class="field"><b>Wind Direction</b><span data-weather-field="windDirection">--</span></div>
+            <div class="field"><b>Short Forecast</b><span data-weather-field="shortForecast">--</span></div>
+            <div class="field"><b>Last Updated</b><span data-weather-field="updated">--</span></div>
+            <div class="field"><b>Status</b><span data-weather-field="status">Ready</span></div>
+          </div>
+          <div class="noaa-card-actions">
+            <button type="button" data-use-noaa="bay-city">Use for Decision</button>
+            <span class="copy-confirmation" data-copy-confirmation></span>
           </div>
         </article>
       </div>
@@ -1773,7 +1931,11 @@
       var decisionLabel = document.getElementById("decisionLabel");
       var decisionDetail = document.getElementById("decisionDetail");
       var decisionUpdated = document.getElementById("decisionUpdated");
+      var decisionLocation = document.getElementById("decisionLocation");
       var decisionWind = document.getElementById("decisionWind");
+      var decisionWindMeaning = document.getElementById("decisionWindMeaning");
+      var decisionWindDirection = document.getElementById("decisionWindDirection");
+      var decisionTemperature = document.getElementById("decisionTemperature");
       var decisionWaves = document.getElementById("decisionWaves");
       var decisionVisibility = document.getElementById("decisionVisibility");
       var decisionReason = document.getElementById("decisionReason");
@@ -1918,7 +2080,10 @@
             decision: decision,
             detail: decisionDetail.textContent,
             updated: decisionUpdated.textContent,
+            location: decisionLocation.value,
             wind: saveInputs ? decisionWind.value : "",
+            windDirection: decisionWindDirection.value,
+            temperature: decisionTemperature.value,
             waves: saveInputs ? decisionWaves.value : "",
             visibility: saveInputs ? decisionVisibility.value : "",
             reason: decisionReason.value
@@ -1933,6 +2098,66 @@
         return Number.isFinite(value) ? value : null;
       }
 
+      function windMeaningFromMPH(speed) {
+        if (!Number.isFinite(speed)) {
+          return "Wind feel: enter MPH";
+        }
+
+        if (speed < 10) {
+          return "Wind feel: Calm";
+        }
+
+        if (speed <= 15) {
+          return "Wind feel: Light chop";
+        }
+
+        if (speed < 20) {
+          return "Wind feel: Moderate";
+        }
+
+        return "Wind feel: Rough / caution";
+      }
+
+      function maxWindMPHFromText(value) {
+        var matches = String(value || "").match(/\d+(?:\.\d+)?/g);
+
+        if (!matches) {
+          return null;
+        }
+
+        return Math.max.apply(null, matches.map(function (match) {
+          return parseFloat(match);
+        }));
+      }
+
+      function formatWindSpeedMPH(value) {
+        var text = String(value || "").trim().toLowerCase();
+
+        if (!text) {
+          return "";
+        }
+
+        text = text.replace(/\s+/g, " ");
+        text = text.replace(/\bmiles per hour\b/g, "mph");
+        text = text.replace(/\bmi\/h\b/g, "mph");
+        text = text.replace(/\bm\.p\.h\.\b/g, "mph");
+        text = text.replace(/\s*mph\b/g, " mph");
+        text = text.replace(/(\d+(?:\.\d+)?)\s*(?:to|-|\u2013)\s*(\d+(?:\.\d+)?)\s*mph\b/g, "$1\u2013$2 mph");
+        text = text.replace(/(\d+(?:\.\d+)?)\s*mph\b/g, "$1 mph");
+        text = text.replace(/\s+/g, " ").trim();
+
+        return text.replace(/\b([nesw]{1,3})\b/g, function (match) {
+          return match.toUpperCase();
+        });
+      }
+
+      function formatNOAAWindSpeedMPH(period) {
+        return formatWindSpeedMPH(period && period.windSpeed ? period.windSpeed : "");
+      }
+
+      window.formatWindSpeedMPH = formatWindSpeedMPH;
+      window.formatNOAAWindSpeedMPH = formatNOAAWindSpeedMPH;
+
       function evaluateDecision() {
         var wind = numberFromInput(decisionWind);
         var waves = numberFromInput(decisionWaves);
@@ -1940,8 +2165,11 @@
         var hasAnyValue = wind !== null || waves !== null || visibility !== null;
 
         if (!hasAnyValue) {
+          decisionWindMeaning.textContent = windMeaningFromMPH(wind);
           return;
         }
+
+        decisionWindMeaning.textContent = windMeaningFromMPH(wind);
 
         if ((wind !== null && wind > 20) || (waves !== null && waves > 3) || (visibility !== null && visibility < 2)) {
           setDecision("red", "Automatic threshold", true);
@@ -1961,7 +2189,10 @@
         decisionLabel.textContent = savedDecision.decision === "red" ? "NO-GO" : savedDecision.decision === "yellow" ? "CAUTION" : "GO";
         decisionDetail.textContent = savedDecision.detail || decisionDetail.textContent;
         decisionUpdated.textContent = savedDecision.updated || decisionUpdated.textContent;
+        decisionLocation.value = savedDecision.location || "";
         decisionWind.value = savedDecision.wind || "";
+        decisionWindDirection.value = savedDecision.windDirection || "";
+        decisionTemperature.value = savedDecision.temperature || "";
         decisionWaves.value = savedDecision.waves || "";
         decisionVisibility.value = savedDecision.visibility || "";
         decisionReason.value = savedDecision.reason || "";
@@ -1977,6 +2208,10 @@
         input.addEventListener("input", evaluateDecision);
       });
 
+      decisionWind.addEventListener("change", function () {
+        decisionWind.value = formatWindSpeedMPH(decisionWind.value).replace(" mph", "");
+      });
+
       decisionReason.addEventListener("input", function () {
         var currentDecision = decisionPanel.getAttribute("data-decision") || "green";
         setDecision(currentDecision, "Reason updated", true);
@@ -1985,11 +2220,345 @@
       var riskMeter = document.getElementById("riskMeter");
       var riskReadout = document.getElementById("riskReadout");
       var riskText = document.getElementById("riskText");
+      var weatherWind = document.getElementById("weatherWind");
+      var weatherWindMeaning = document.getElementById("weatherWindMeaning");
+      var weatherLocation = document.getElementById("weatherLocation");
+      var weatherVisibility = document.getElementById("weatherVisibility");
+      var weatherNotes = document.getElementById("weatherNotes");
+      var refreshNoaaWeather = document.getElementById("refreshNoaaWeather");
+      var noaaStatus = document.getElementById("noaaStatus");
       var riskMessages = {
         green: "Light wind, low waves, good visibility, no marine alerts.",
         yellow: "Marginal conditions. Recheck forecast, identify alternates, and reduce exposure.",
         red: "Do not depart until the risk source clears and the forecast improves."
       };
+
+      var noaaStops = [
+        { id: "boyne", name: "Boyne City / Harborage", lat: 45.21, lon: -85.02 },
+        { id: "petoskey", name: "Petoskey", lat: 45.3817, lon: -84.9617 },
+        { id: "mackinac", name: "Mackinac Island", lat: 45.85, lon: -84.615 },
+        { id: "harrisville", name: "Harrisville", lat: 44.6617, lon: -83.28 },
+        { id: "east-tawas", name: "East Tawas", lat: 44.2767, lon: -83.485 },
+        { id: "bay-city", name: "Bay City", lat: 43.68, lon: -83.825 }
+      ];
+      var noaaByStop = {};
+
+      function setNoaaStatus(message) {
+        noaaStatus.textContent = message;
+      }
+
+      function setWeatherField(stopId, field, value, loaded) {
+        var card = document.querySelector('[data-noaa-stop="' + stopId + '"]');
+
+        if (!card) {
+          return;
+        }
+
+        var target = card.querySelector('[data-weather-field="' + field + '"]');
+
+        if (!target) {
+          return;
+        }
+
+        target.textContent = value || "--";
+        target.classList.toggle("loaded", Boolean(loaded));
+      }
+
+      function formatNoaaTime(value) {
+        if (!value) {
+          return "Just refreshed";
+        }
+
+        var date = new Date(value);
+
+        if (Number.isNaN(date.getTime())) {
+          return "Just refreshed";
+        }
+
+        return date.toLocaleString([], {
+          month: "short",
+          day: "numeric",
+          hour: "numeric",
+          minute: "2-digit"
+        });
+      }
+
+      function formatNoaaVisibility(value) {
+        if (!value) {
+          return "";
+        }
+
+        if (typeof value === "string") {
+          return value;
+        }
+
+        if (typeof value.value === "number" && value.unitCode) {
+          if (value.unitCode.indexOf("mile") !== -1) {
+            return value.value + " mi";
+          }
+
+          if (value.unitCode.indexOf("metre") !== -1 || value.unitCode.indexOf("meter") !== -1) {
+            return Math.round(value.value) + " m";
+          }
+        }
+
+        return "";
+      }
+
+      function firstPeriod(data) {
+        return data && data.properties && Array.isArray(data.properties.periods) ? data.properties.periods[0] : null;
+      }
+
+      function setStopLoading(stop) {
+        setWeatherField(stop.id, "period", "Loading NOAA forecast...", false);
+        setWeatherField(stop.id, "temperature", "--", false);
+        setWeatherField(stop.id, "wind", "--", false);
+        setWeatherField(stop.id, "windDirection", "--", false);
+        setWeatherField(stop.id, "shortForecast", "--", false);
+        setWeatherField(stop.id, "updated", "--", false);
+        setWeatherField(stop.id, "status", "Loading", false);
+      }
+
+      function setStopError(stop, error) {
+        setWeatherField(stop.id, "period", "NOAA unavailable", false);
+        setWeatherField(stop.id, "status", "Could not load NOAA data. Manual tools still work.", false);
+        console.warn("NOAA weather failed for " + stop.name, error);
+      }
+
+      function friendlyNoaaError(error) {
+        var message = error && error.message ? error.message : "unknown error";
+
+        if (message.indexOf("Failed to fetch") !== -1) {
+          return "network/CORS fetch failed";
+        }
+
+        return message;
+      }
+
+      function updateStopWeather(stop, hourlyData, forecastData) {
+        var hourly = firstPeriod(hourlyData);
+        var forecast = firstPeriod(forecastData);
+        var periodName = forecast && forecast.name ? forecast.name : hourly && hourly.startTime ? formatNoaaTime(hourly.startTime) : "Next forecast";
+        var temperature = hourly && hourly.temperature !== undefined ? hourly.temperature + "\u00b0" + (hourly.temperatureUnit || "F") : "--";
+        var wind = formatNOAAWindSpeedMPH(hourly || forecast) || "--";
+        var windDirection = hourly && hourly.windDirection ? hourly.windDirection : forecast && forecast.windDirection ? forecast.windDirection : "--";
+        var shortForecast = hourly && hourly.shortForecast ? hourly.shortForecast : forecast && forecast.shortForecast ? forecast.shortForecast : "--";
+        var updated = hourlyData && hourlyData.properties && hourlyData.properties.updated ? hourlyData.properties.updated : forecastData && forecastData.properties && forecastData.properties.updated;
+        var routeWind = document.querySelector('[data-route-wind="' + stop.id + '"]');
+        var card = document.querySelector('[data-noaa-stop="' + stop.id + '"]');
+        var noaaRecord = {
+          stopId: stop.id,
+          name: stop.name,
+          period: periodName,
+          temperature: temperature,
+          wind: wind,
+          windDirection: windDirection,
+          shortForecast: shortForecast,
+          updated: formatNoaaTime(updated),
+          visibility: formatNoaaVisibility(hourly && hourly.visibility ? hourly.visibility : forecast && forecast.visibility ? forecast.visibility : "")
+        };
+
+        noaaByStop[stop.id] = noaaRecord;
+
+        if (card) {
+          card._noaaRecord = noaaRecord;
+        }
+
+        setWeatherField(stop.id, "period", "Next forecast: " + periodName, true);
+        setWeatherField(stop.id, "temperature", temperature, true);
+        setWeatherField(stop.id, "wind", wind, true);
+        setWeatherField(stop.id, "windDirection", windDirection, true);
+        setWeatherField(stop.id, "shortForecast", shortForecast, true);
+        setWeatherField(stop.id, "updated", formatNoaaTime(updated), true);
+        setWeatherField(stop.id, "status", "Loaded from api.weather.gov", true);
+
+        if (routeWind) {
+          routeWind.textContent = "Wind (MPH): " + wind;
+        }
+      }
+
+      function updateLastCheckedFromNoaa() {
+        var stamp = formatCheckedTime(new Date());
+        lastChecked.textContent = stamp;
+        storageSet("helm-last-checked", stamp);
+      }
+
+      function saveManualWeatherFields() {
+        storageSet("helm-field-weatherLocation", weatherLocation.value);
+        storageSet("helm-field-weatherWind", weatherWind.value);
+        storageSet("helm-field-weatherVisibility", weatherVisibility.value);
+        storageSet("helm-field-weatherNotes", weatherNotes.value);
+      }
+
+      function saveDecisionFields() {
+        storageSet("helm-field-decisionLocation", decisionLocation.value);
+        storageSet("helm-field-decisionWind", decisionWind.value);
+        storageSet("helm-field-decisionWindDirection", decisionWindDirection.value);
+        storageSet("helm-field-decisionTemperature", decisionTemperature.value);
+        storageSet("helm-field-decisionVisibility", decisionVisibility.value);
+        storageSet("helm-field-decisionReason", decisionReason.value);
+      }
+
+      function saveDecisionState() {
+        try {
+          localStorage.setItem("helm-decision", JSON.stringify({
+            decision: decisionPanel.getAttribute("data-decision") || "green",
+            detail: decisionDetail.textContent,
+            updated: decisionUpdated.textContent,
+            location: decisionLocation.value,
+            wind: decisionWind.value,
+            windDirection: decisionWindDirection.value,
+            temperature: decisionTemperature.value,
+            waves: decisionWaves.value,
+            visibility: decisionVisibility.value,
+            reason: decisionReason.value
+          }));
+        } catch (error) {
+          return;
+        }
+      }
+
+      function useNoaaForDecision(stopId) {
+        var record = noaaByStop[stopId];
+        var card = document.querySelector('[data-noaa-stop="' + stopId + '"]');
+        var confirmation = card ? card.querySelector("[data-copy-confirmation]") : null;
+
+        if (!record) {
+          if (confirmation) {
+            confirmation.textContent = "Refresh NOAA first.";
+          }
+          return;
+        }
+
+        weatherLocation.value = record.name;
+        weatherWind.value = formatWindSpeedMPH(record.wind);
+        weatherWindMeaning.textContent = windMeaningFromMPH(maxWindMPHFromText(weatherWind.value));
+
+        decisionLocation.value = record.name;
+        decisionWind.value = String(maxWindMPHFromText(record.wind) || "");
+        decisionWindMeaning.textContent = windMeaningFromMPH(numberFromInput(decisionWind));
+        decisionWindDirection.value = record.windDirection !== "--" ? record.windDirection : "";
+        decisionTemperature.value = record.temperature !== "--" ? record.temperature : "";
+
+        if (record.visibility) {
+          weatherVisibility.value = record.visibility;
+          decisionVisibility.value = record.visibility;
+        }
+
+        weatherNotes.value = [
+          "NOAA " + record.period + ": " + record.shortForecast,
+          "Temp: " + record.temperature,
+          "Wind: " + record.wind + " " + record.windDirection,
+          "Updated: " + record.updated
+        ].join("\n");
+
+        decisionReason.value = [
+          record.shortForecast,
+          "Temp: " + record.temperature,
+          "Wind: " + record.wind + " " + record.windDirection,
+          "NOAA updated: " + record.updated
+        ].join("\n");
+
+        saveManualWeatherFields();
+        saveDecisionFields();
+        updateLastCheckedFromNoaa();
+        evaluateDecision();
+        decisionUpdated.textContent = "NOAA updated " + record.updated;
+        saveDecisionState();
+
+        if (confirmation) {
+          confirmation.textContent = "NOAA data copied to decision fields";
+          window.setTimeout(function () {
+            confirmation.textContent = "";
+          }, 4000);
+        }
+      }
+
+      function fetchJson(url) {
+        return fetch(url, {
+          headers: {
+            "Accept": "application/geo+json"
+          }
+        }).then(function (response) {
+          if (!response.ok) {
+            throw new Error("NOAA request failed: " + response.status);
+          }
+
+          return response.json();
+        });
+      }
+
+      function refreshStopWeather(stop) {
+        setStopLoading(stop);
+
+        return fetchJson("https://api.weather.gov/points/" + stop.lat + "," + stop.lon)
+          .then(function (pointData) {
+            var properties = pointData && pointData.properties ? pointData.properties : {};
+
+            if (!properties.forecastHourly || !properties.forecast) {
+              throw new Error("NOAA point response missing forecast URLs");
+            }
+
+            return Promise.all([
+              fetchJson(properties.forecastHourly),
+              fetchJson(properties.forecast)
+            ]);
+          })
+          .then(function (results) {
+            updateStopWeather(stop, results[0], results[1]);
+            return { ok: true, stop: stop.name };
+          })
+          .catch(function (error) {
+            setStopError(stop, error);
+            return { ok: false, stop: stop.name, reason: friendlyNoaaError(error) };
+          });
+      }
+
+      function refreshNoaa() {
+        refreshNoaaWeather.disabled = true;
+        setNoaaStatus("Refreshing NOAA weather for all stops...");
+
+        Promise.all(noaaStops.map(refreshStopWeather)).then(function (results) {
+          var loadedCount = results.filter(function (result) {
+            return result.ok;
+          }).length;
+          var failures = results.filter(function (result) {
+            return !result.ok;
+          });
+          var stamp = new Date().toLocaleString([], {
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit"
+          });
+
+          refreshNoaaWeather.disabled = false;
+
+          if (loadedCount === noaaStops.length) {
+            setNoaaStatus("NOAA weather refreshed for all stops at " + stamp + ".");
+            return;
+          }
+
+          if (loadedCount > 0) {
+            setNoaaStatus("NOAA weather partially refreshed: " + loadedCount + " of " + noaaStops.length + " stops loaded at " + stamp + ". Failed: " + failures.map(function (failure) {
+              return failure.stop + " (" + failure.reason + ")";
+            }).join("; ") + ".");
+            return;
+          }
+
+          setNoaaStatus("NOAA weather could not be loaded. Failed: " + failures.map(function (failure) {
+            return failure.stop + " (" + failure.reason + ")";
+          }).join("; ") + ". Use manual weather, marine forecasts, buoy reports, and visual conditions.");
+        });
+      }
+
+      refreshNoaaWeather.addEventListener("click", refreshNoaa);
+
+      document.querySelectorAll("[data-use-noaa]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          useNoaaForDecision(button.getAttribute("data-use-noaa"));
+        });
+      });
 
       document.querySelectorAll("[data-risk-choice]").forEach(function (button) {
         button.addEventListener("click", function () {
@@ -1999,6 +2568,13 @@
           riskText.textContent = riskMessages[risk];
         });
       });
+
+      if (weatherWind) {
+        weatherWind.addEventListener("change", function () {
+          weatherWind.value = formatWindSpeedMPH(weatherWind.value);
+          weatherWindMeaning.textContent = windMeaningFromMPH(maxWindMPHFromText(weatherWind.value));
+        });
+      }
 
       function persistEditableFields() {
         document.querySelectorAll("input, textarea, select").forEach(function (field, index) {
@@ -2037,6 +2613,14 @@
       }
 
       persistEditableFields();
+
+      if (weatherWind && weatherWind.value) {
+        weatherWind.value = formatWindSpeedMPH(weatherWind.value);
+        weatherWindMeaning.textContent = windMeaningFromMPH(maxWindMPHFromText(weatherWind.value));
+        storageSet("helm-field-weatherWind", weatherWind.value);
+      }
+
+      decisionWindMeaning.textContent = windMeaningFromMPH(numberFromInput(decisionWind));
 
       resetDashboard.addEventListener("click", function () {
         var confirmed = window.confirm("Reset saved dashboard fields, decision, contact, and checklist?");
