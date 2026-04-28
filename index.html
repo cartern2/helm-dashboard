@@ -586,6 +586,67 @@
       font-weight: 820;
     }
 
+    .leg-warning {
+      display: none;
+      margin: 10px 14px 0;
+      padding: 10px 12px;
+      border: 2px solid #efcf82;
+      border-left-width: 6px;
+      border-radius: 8px;
+      background: #fff8e8;
+      color: #553900;
+      font-size: 0.95rem;
+      font-weight: 900;
+    }
+
+    .leg-warning.visible {
+      display: block;
+    }
+
+    .departure-guidance {
+      display: grid;
+      gap: 10px;
+      margin: 10px 14px 0;
+      padding: 12px;
+      border: 2px solid #8bd2b5;
+      border-radius: 8px;
+      background: #f5fffa;
+      color: #063b26;
+    }
+
+    .departure-guidance[data-guidance="yellow"] {
+      border-color: #efcf82;
+      background: #fff8e8;
+      color: #553900;
+    }
+
+    .departure-guidance[data-guidance="red"] {
+      border-color: #e7a19b;
+      background: #fff2f0;
+      color: #64110b;
+    }
+
+    .departure-guidance[data-guidance="none"] {
+      border-color: var(--line);
+      background: #f5f8f9;
+      color: var(--muted);
+    }
+
+    .departure-guidance h3 {
+      margin: 0;
+      font-size: 1.08rem;
+    }
+
+    .departure-guidance p {
+      margin: 0;
+      font-weight: 900;
+    }
+
+    .departure-guidance span {
+      font-size: 0.92rem;
+      font-weight: 820;
+    }
+
     .decision-detail {
       font-size: 1.05rem;
       font-weight: 900;
@@ -628,6 +689,100 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 8px;
+    }
+
+    .quick-check-panel {
+      display: grid;
+      gap: 12px;
+      padding: 14px;
+      border: 3px solid var(--blue);
+      border-radius: 8px;
+      background: #eef9fc;
+      box-shadow: var(--shadow);
+    }
+
+    .quick-check-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .quick-check-actions {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 10px;
+    }
+
+    .quick-check-actions button {
+      min-height: 68px;
+      font-size: 1.12rem;
+    }
+
+    .quick-check-actions .primary-action {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .quick-check-actions .secondary-action {
+      border-color: var(--line);
+      background: #fff;
+    }
+
+    .snapshots-panel {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .snapshots-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .snapshots-header h3 {
+      margin: 0;
+      font-size: 1.15rem;
+    }
+
+    .snapshots-header button {
+      min-height: 46px;
+      padding: 0 12px;
+      font-size: 0.92rem;
+    }
+
+    .snapshots-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .snapshot-card {
+      display: grid;
+      gap: 5px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-left: 6px solid var(--blue);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .snapshot-card b {
+      color: var(--navy);
+      font-size: 1rem;
+    }
+
+    .snapshot-card span {
+      color: var(--ink);
+      font-weight: 850;
+    }
+
+    .snapshot-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 780;
     }
 
     .decision-updated {
@@ -1281,6 +1436,11 @@
         grid-template-columns: 1fr;
       }
 
+      .quick-check-grid,
+      .quick-check-actions {
+        grid-template-columns: 1fr;
+      }
+
       .action-grid,
       .marina-actions,
       .buoy-toolbar {
@@ -1328,6 +1488,8 @@
     }
 
     html[data-theme="dark"] .tabs a,
+    html[data-theme="dark"] .quick-check-panel,
+    html[data-theme="dark"] .snapshot-card,
     html[data-theme="dark"] .weather,
     html[data-theme="dark"] .condition,
     html[data-theme="dark"] .buoy-card,
@@ -1417,6 +1579,31 @@
       color: var(--muted);
     }
 
+    html[data-theme="dark"] .leg-warning {
+      background: #2a2007;
+      color: #fff4cc;
+    }
+
+    html[data-theme="dark"] .departure-guidance {
+      background: #082116;
+      color: #e8fff5;
+    }
+
+    html[data-theme="dark"] .departure-guidance[data-guidance="yellow"] {
+      background: #2a2007;
+      color: #fff4cc;
+    }
+
+    html[data-theme="dark"] .departure-guidance[data-guidance="red"] {
+      background: #2d0c09;
+      color: #ffe3df;
+    }
+
+    html[data-theme="dark"] .departure-guidance[data-guidance="none"] {
+      background: #0b202b;
+      color: var(--muted);
+    }
+
     html[data-theme="dark"] .reference {
       background: #12313d;
       color: #dce8eb;
@@ -1429,6 +1616,8 @@
 
     html[data-theme="dark"] .total-route span,
     html[data-theme="dark"] .coords,
+    html[data-theme="dark"] .snapshot-card b,
+    html[data-theme="dark"] .snapshot-card span,
     html[data-theme="dark"] .tabs a,
     html[data-theme="dark"] .pill,
     html[data-theme="dark"] details.collapsible-section > summary::after {
@@ -1472,7 +1661,8 @@
     }
 
     html[data-theme="dark"] .action-link.primary,
-    html[data-theme="dark"] .action-link.warning {
+    html[data-theme="dark"] .action-link.warning,
+    html[data-theme="dark"] .quick-check-actions .primary-action {
       color: #fff;
     }
 
@@ -1552,6 +1742,55 @@
   </nav>
 
   <main>
+    <section id="quick-check" aria-labelledby="quick-check-title">
+      <div class="section-title">
+        <h2 id="quick-check-title">Quick Check</h2>
+        <span class="small-note">Fast helm update</span>
+      </div>
+
+      <div class="quick-check-panel">
+        <div class="quick-check-grid">
+          <label class="form-label">Current Leg
+            <select id="currentLeg">
+              <option value="">Select leg</option>
+              <option>Boyne City to Petoskey</option>
+              <option>Petoskey to Mackinac Island</option>
+              <option>Mackinac Island to Harrisville</option>
+              <option>Harrisville to East Tawas</option>
+              <option>East Tawas to Bay City</option>
+            </select>
+          </label>
+          <label class="form-label">Wind (MPH)
+            <input id="quickWind" type="number" inputmode="decimal" min="0" step="1" placeholder="10">
+          </label>
+          <label class="form-label">Waves ft
+            <input id="quickWaves" type="number" inputmode="decimal" min="0" step="0.5" placeholder="1">
+          </label>
+          <label class="form-label">Visibility nm
+            <input id="quickVisibility" type="number" inputmode="decimal" min="0" step="0.5" placeholder="5">
+          </label>
+        </div>
+
+        <div class="quick-check-actions">
+          <button class="primary-action" id="updateGuidance" type="button">Update Guidance</button>
+          <button class="secondary-action" id="saveSnapshot" type="button">Save Snapshot</button>
+          <button class="secondary-action" id="startFresh" type="button">Start Fresh</button>
+        </div>
+      </div>
+
+      <div class="snapshots-panel" aria-labelledby="snapshots-title">
+        <div class="snapshots-header">
+          <h3 id="snapshots-title">Snapshots</h3>
+          <button id="clearSnapshots" type="button">Clear Snapshots</button>
+        </div>
+        <div class="snapshots-list" id="snapshotsList">
+          <article class="snapshot-card">
+            <span>No snapshots saved yet.</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <section id="captain-flow" aria-labelledby="captain-flow-title">
       <div class="section-title">
         <h2 id="captain-flow-title">Captain Flow</h2>
@@ -1591,6 +1830,15 @@
           <b id="suggestedDecisionLabel">Suggested: enter wind, waves, and visibility</b>
           <span id="suggestedDecisionNote">Manual decision remains in control.</span>
         </div>
+
+        <div class="leg-warning" id="legRiskWarning" role="status" aria-live="polite"></div>
+
+        <article class="departure-guidance" id="departureGuidance" data-guidance="none" aria-labelledby="departure-guidance-title">
+          <h3 id="departure-guidance-title">Departure Guidance</h3>
+          <p id="departureGuidanceText">Enter wind, waves, visibility, area, and current leg for guidance.</p>
+          <span id="departureLegWarning">Leg warning: select a current leg.</span>
+          <span id="departureRecheck">Recommended re-check interval: enter conditions.</span>
+        </article>
 
         <div class="decision-controls">
           <div class="decision-buttons" aria-label="Manual decision">
@@ -2117,7 +2365,7 @@
 
     <details id="safety" class="collapsible-section">
       <summary class="section-title">
-        <h2 id="safety-title">Pre-Departure Go / No-Go Checklist</h2>
+        <h2 id="safety-title">Detailed Safety Checklist</h2>
         <span class="small-note">Any unchecked critical item means delay departure</span>
       </summary>
 
@@ -2163,7 +2411,7 @@
     </section>
   </main>
   <nav class="bottom-nav" aria-label="Primary helm navigation">
-    <a href="#decision">Decide</a>
+    <a href="#quick-check">Quick Check</a>
     <a href="#weather">Weather</a>
     <a href="#marine">Marine</a>
     <a href="#safety">Safety</a>
@@ -2184,7 +2432,21 @@
       var suggestedDecision = document.getElementById("suggestedDecision");
       var suggestedDecisionLabel = document.getElementById("suggestedDecisionLabel");
       var suggestedDecisionNote = document.getElementById("suggestedDecisionNote");
+      var legRiskWarning = document.getElementById("legRiskWarning");
+      var departureGuidance = document.getElementById("departureGuidance");
+      var departureGuidanceText = document.getElementById("departureGuidanceText");
+      var departureLegWarning = document.getElementById("departureLegWarning");
+      var departureRecheck = document.getElementById("departureRecheck");
       var decisionLocation = document.getElementById("decisionLocation");
+      var currentLeg = document.getElementById("currentLeg");
+      var quickWind = document.getElementById("quickWind");
+      var quickWaves = document.getElementById("quickWaves");
+      var quickVisibility = document.getElementById("quickVisibility");
+      var updateGuidance = document.getElementById("updateGuidance");
+      var saveSnapshot = document.getElementById("saveSnapshot");
+      var clearSnapshots = document.getElementById("clearSnapshots");
+      var snapshotsList = document.getElementById("snapshotsList");
+      var startFresh = document.getElementById("startFresh");
       var decisionWind = document.getElementById("decisionWind");
       var decisionWindMeaning = document.getElementById("decisionWindMeaning");
       var decisionWindDirection = document.getElementById("decisionWindDirection");
@@ -2198,6 +2460,7 @@
       var savedCheck = null;
       var savedDecision = null;
       var savedEmergencyContact = null;
+      var snapshots = [];
       var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
 
       try {
@@ -2205,11 +2468,17 @@
         savedCheck = localStorage.getItem("helm-last-checked");
         savedDecision = JSON.parse(localStorage.getItem("helm-decision") || "null");
         savedEmergencyContact = localStorage.getItem("helm-emergency-contact");
+        snapshots = JSON.parse(localStorage.getItem("helm-snapshots") || "[]");
       } catch (error) {
         savedTheme = null;
         savedCheck = null;
         savedDecision = null;
         savedEmergencyContact = null;
+        snapshots = [];
+      }
+
+      if (!Array.isArray(snapshots)) {
+        snapshots = [];
       }
 
       var startTheme = savedTheme || (prefersDark ? "dark" : "light");
@@ -2258,18 +2527,52 @@
         });
       }
 
+      function escapeHtml(value) {
+        return String(value || "").replace(/[&<>"']/g, function (character) {
+          return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            "\"": "&quot;",
+            "'": "&#39;"
+          }[character];
+        });
+      }
+
+      function saveSnapshots() {
+        storageSet("helm-snapshots", JSON.stringify(snapshots));
+      }
+
+      function renderSnapshots() {
+        if (!snapshots.length) {
+          snapshotsList.innerHTML = '<article class="snapshot-card"><span>No snapshots saved yet.</span></article>';
+          return;
+        }
+
+        snapshotsList.innerHTML = snapshots.map(function (snapshot) {
+          return [
+            '<article class="snapshot-card">',
+            '<b>' + escapeHtml(snapshot.time) + ' | ' + escapeHtml(snapshot.currentLeg || "No leg selected") + '</b>',
+            '<span>Wind ' + escapeHtml(snapshot.wind || "--") + ' mph | Waves ' + escapeHtml(snapshot.waves || "--") + ' ft | Visibility ' + escapeHtml(snapshot.visibility || "--") + ' nm</span>',
+            '<span>Manual: ' + escapeHtml(snapshot.manualDecision) + ' | Suggested: ' + escapeHtml(snapshot.suggestedDecision) + '</span>',
+            '<p>' + escapeHtml(snapshot.guidanceSummary) + '</p>',
+            '</article>'
+          ].join("");
+        }).join("");
+      }
+
       if (savedCheck) {
         lastChecked.textContent = savedCheck;
       }
 
-      checkedNow.addEventListener("click", function () {
+      function updateLastCheckedNow() {
         var stamp = formatCheckedTime(new Date());
         lastChecked.textContent = stamp;
-        try {
-          localStorage.setItem("helm-last-checked", stamp);
-        } catch (error) {
-          return;
-        }
+        storageSet("helm-last-checked", stamp);
+      }
+
+      checkedNow.addEventListener("click", function () {
+        updateLastCheckedNow();
       });
 
       printFloatPlan.addEventListener("click", function () {
@@ -2360,6 +2663,7 @@
             detail: decisionDetail.textContent,
             updated: decisionUpdated.textContent,
             location: decisionLocation.value,
+            currentLeg: currentLeg.value,
             wind: saveInputs ? decisionWind.value : "",
             windDirection: decisionWindDirection.value,
             temperature: decisionTemperature.value,
@@ -2379,6 +2683,111 @@
 
       function currentManualDecision() {
         return decisionPanel.getAttribute("data-decision") || "green";
+      }
+
+      function decisionName(value) {
+        if (value === "red") {
+          return "NO-GO";
+        }
+
+        if (value === "yellow") {
+          return "CAUTION";
+        }
+
+        if (value === "green") {
+          return "GO";
+        }
+
+        return "Not enough data";
+      }
+
+      function legWarningForLocation(value) {
+        var location = String(value || "").toLowerCase();
+
+        if (location.indexOf("mackinac") !== -1 || location.indexOf("harrisville") !== -1) {
+          return "Long open-water leg. Small increases in wind can create significant wave buildup.";
+        }
+
+        if (location.indexOf("saginaw") !== -1 || location.indexOf("bay city") !== -1) {
+          return "Shallow water. Waves can become steep and uncomfortable quickly.";
+        }
+
+        if (location.indexOf("petoskey") !== -1) {
+          return "More protected waters, but watch wind direction and fetch.";
+        }
+
+        return "";
+      }
+
+      function updateLegRiskWarning() {
+        var warning = legWarningForLocation(decisionLocation.value);
+
+        legRiskWarning.textContent = warning;
+        legRiskWarning.classList.toggle("visible", Boolean(warning));
+      }
+
+      function legWarningForGuidance() {
+        var leg = String(currentLeg.value || "").toLowerCase();
+        var area = String(decisionLocation.value || "").toLowerCase();
+
+        if (leg.indexOf("mackinac island to harrisville") !== -1) {
+          return "Longest exposed leg. Build in extra fuel reserve and avoid marginal conditions.";
+        }
+
+        if (leg.indexOf("east tawas to bay city") !== -1 || area.indexOf("saginaw") !== -1 || area.indexOf("bay city") !== -1) {
+          return "Shallow bay. Waves can become steep quickly.";
+        }
+
+        if (leg.indexOf("boyne city to petoskey") !== -1 || leg.indexOf("petoskey to mackinac island") !== -1 || area.indexOf("petoskey") !== -1 || area.indexOf("little traverse") !== -1) {
+          return "More protected area, but wind direction and fetch still matter.";
+        }
+
+        if (leg.indexOf("harrisville to east tawas") !== -1 || area.indexOf("lake huron") !== -1 || area.indexOf("harrisville") !== -1) {
+          return "Open-water exposure. Confirm wave height and period before committing.";
+        }
+
+        return "Leg warning: select a current leg or enter a known route area.";
+      }
+
+      function guidanceTextForSuggestion(suggestion) {
+        if (suggestion === "red") {
+          return "Do not depart or continue unless conditions improve. Re-check NOAA, marine forecast, buoy reports, and visual conditions.";
+        }
+
+        if (suggestion === "yellow") {
+          return "Proceed only if crew, fuel, daylight, and alternate ports are favorable. Re-check every 30\u201360 minutes.";
+        }
+
+        if (suggestion === "green") {
+          return "Conditions appear favorable, but continue monitoring wind, waves, visibility, radar, and crew comfort.";
+        }
+
+        return "Enter wind, waves, visibility, area, and current leg for guidance.";
+      }
+
+      function recheckIntervalForSuggestion(suggestion) {
+        if (suggestion === "red") {
+          return "Recommended re-check interval: do not proceed; re-check before any departure.";
+        }
+
+        if (suggestion === "yellow") {
+          return "Recommended re-check interval: every 30 minutes.";
+        }
+
+        if (suggestion === "green") {
+          return "Recommended re-check interval: every 60 minutes.";
+        }
+
+        return "Recommended re-check interval: enter conditions.";
+      }
+
+      function updateDepartureGuidance() {
+        var suggestion = suggestedDecision.getAttribute("data-suggestion") || "none";
+
+        departureGuidance.setAttribute("data-guidance", suggestion);
+        departureGuidanceText.textContent = guidanceTextForSuggestion(suggestion);
+        departureLegWarning.textContent = legWarningForGuidance();
+        departureRecheck.textContent = recheckIntervalForSuggestion(suggestion);
       }
 
       function windMeaningFromMPH(speed) {
@@ -2482,15 +2891,70 @@
 
         if (suggestion === "none") {
           suggestedDecisionNote.textContent = "Manual decision remains in control.";
+          updateDepartureGuidance();
           return;
         }
 
         if (currentManualDecision() !== suggestion) {
           suggestedDecisionNote.textContent = "Manual decision differs from suggestion.";
+          updateDepartureGuidance();
           return;
         }
 
         suggestedDecisionNote.textContent = "Manual decision matches suggestion.";
+        updateDepartureGuidance();
+      }
+
+      function syncQuickFromDecision() {
+        quickWind.value = decisionWind.value;
+        quickWaves.value = decisionWaves.value;
+        quickVisibility.value = decisionVisibility.value;
+        storageSet("helm-field-quickWind", quickWind.value);
+        storageSet("helm-field-quickWaves", quickWaves.value);
+        storageSet("helm-field-quickVisibility", quickVisibility.value);
+      }
+
+      function saveOperationalFields() {
+        storageSet("helm-field-currentLeg", currentLeg.value);
+        storageSet("helm-field-quickWind", quickWind.value);
+        storageSet("helm-field-quickWaves", quickWaves.value);
+        storageSet("helm-field-quickVisibility", quickVisibility.value);
+        storageSet("helm-field-decisionWind", decisionWind.value);
+        storageSet("helm-field-decisionWaves", decisionWaves.value);
+        storageSet("helm-field-decisionVisibility", decisionVisibility.value);
+      }
+
+      function syncDecisionFromQuick(markChecked) {
+        decisionWind.value = quickWind.value;
+        decisionWaves.value = quickWaves.value;
+        decisionVisibility.value = quickVisibility.value;
+        saveOperationalFields();
+        updateSuggestedDecision();
+        saveDecisionState();
+
+        if (markChecked) {
+          updateLastCheckedNow();
+        }
+      }
+
+      function guidanceSummaryText() {
+        return departureGuidanceText.textContent || "Guidance not available.";
+      }
+
+      function createSnapshot() {
+        syncDecisionFromQuick(true);
+        saveDecisionState();
+
+        return {
+          time: formatDecisionTime(new Date()),
+          currentLeg: currentLeg.value,
+          wind: quickWind.value,
+          waves: quickWaves.value,
+          visibility: quickVisibility.value,
+          suggestedDecision: decisionName(suggestedDecision.getAttribute("data-suggestion") || "none"),
+          manualDecision: decisionName(currentManualDecision()),
+          guidanceSummary: guidanceSummaryText()
+        };
       }
 
       if (savedDecision) {
@@ -2499,6 +2963,7 @@
         decisionDetail.textContent = savedDecision.detail || decisionDetail.textContent;
         decisionUpdated.textContent = savedDecision.updated || decisionUpdated.textContent;
         decisionLocation.value = savedDecision.location || "";
+        currentLeg.value = savedDecision.currentLeg || currentLeg.value;
         decisionWind.value = savedDecision.wind || "";
         decisionWindDirection.value = savedDecision.windDirection || "";
         decisionTemperature.value = savedDecision.temperature || "";
@@ -2515,7 +2980,86 @@
       });
 
       [decisionWind, decisionWaves, decisionVisibility].forEach(function (input) {
-        input.addEventListener("input", updateSuggestedDecision);
+        input.addEventListener("input", function () {
+          syncQuickFromDecision();
+          updateSuggestedDecision();
+        });
+      });
+
+      [quickWind, quickWaves, quickVisibility].forEach(function (input) {
+        input.addEventListener("input", function () {
+          syncDecisionFromQuick(true);
+        });
+      });
+
+      decisionLocation.addEventListener("input", function () {
+        updateLegRiskWarning();
+        updateDepartureGuidance();
+      });
+
+      currentLeg.addEventListener("change", function () {
+        updateDepartureGuidance();
+        updateLastCheckedNow();
+        storageSet("helm-field-currentLeg", currentLeg.value);
+        saveDecisionState();
+      });
+
+      updateGuidance.addEventListener("click", function () {
+        syncDecisionFromQuick(true);
+        updateLegRiskWarning();
+        saveDecisionState();
+      });
+
+      saveSnapshot.addEventListener("click", function () {
+        snapshots.unshift(createSnapshot());
+        snapshots = snapshots.slice(0, 12);
+        saveSnapshots();
+        renderSnapshots();
+      });
+
+      clearSnapshots.addEventListener("click", function () {
+        snapshots = [];
+        saveSnapshots();
+        renderSnapshots();
+      });
+
+      startFresh.addEventListener("click", function () {
+        [quickWind, quickWaves, quickVisibility, decisionWind, decisionWaves, decisionVisibility].forEach(function (field) {
+          field.value = "";
+        });
+
+        [weatherNotes, marineNotes, decisionReason].forEach(function (field) {
+          field.value = "";
+        });
+
+        decisionUpdated.textContent = "Decision not updated this session";
+        lastChecked.textContent = "Not checked this session";
+        suggestedDecision.setAttribute("data-suggestion", "none");
+        suggestedDecisionLabel.textContent = "Suggested: enter wind, waves, and visibility";
+        suggestedDecisionNote.textContent = "Manual decision remains in control.";
+        updateSuggestedDecision();
+        updateDepartureGuidance();
+
+        [
+          "helm-last-checked",
+          "helm-field-quickWind",
+          "helm-field-quickWaves",
+          "helm-field-quickVisibility",
+          "helm-field-decisionWind",
+          "helm-field-decisionWaves",
+          "helm-field-decisionVisibility",
+          "helm-field-weatherNotes",
+          "helm-field-marineNotes",
+          "helm-field-decisionReason"
+        ].forEach(function (key) {
+          try {
+            localStorage.removeItem(key);
+          } catch (error) {
+            return;
+          }
+        });
+
+        saveDecisionState();
       });
 
       decisionWind.addEventListener("change", function () {
@@ -2532,6 +3076,7 @@
       var refreshNoaaWeather = document.getElementById("refreshNoaaWeather");
       var noaaStatus = document.getElementById("noaaStatus");
       var marineSource = document.getElementById("marineSource");
+      var marineNotes = document.getElementById("marineNotes");
 
       var noaaStops = [
         { id: "boyne", name: "Boyne City / Harborage", lat: 45.21, lon: -85.02 },
@@ -2690,9 +3235,11 @@
 
       function saveDecisionFields() {
         storageSet("helm-field-decisionLocation", decisionLocation.value);
+        storageSet("helm-field-currentLeg", currentLeg.value);
         storageSet("helm-field-decisionWind", decisionWind.value);
         storageSet("helm-field-decisionWindDirection", decisionWindDirection.value);
         storageSet("helm-field-decisionTemperature", decisionTemperature.value);
+        storageSet("helm-field-decisionWaves", decisionWaves.value);
         storageSet("helm-field-decisionVisibility", decisionVisibility.value);
         storageSet("helm-field-decisionReason", decisionReason.value);
       }
@@ -2704,6 +3251,7 @@
             detail: decisionDetail.textContent,
             updated: decisionUpdated.textContent,
             location: decisionLocation.value,
+            currentLeg: currentLeg.value,
             wind: decisionWind.value,
             windDirection: decisionWindDirection.value,
             temperature: decisionTemperature.value,
@@ -2736,9 +3284,25 @@
         decisionWindDirection.value = record.windDirection !== "--" ? record.windDirection : "";
         decisionTemperature.value = record.temperature !== "--" ? record.temperature : "";
 
+        if (!currentLeg.value) {
+          if (record.stopId === "petoskey") {
+            currentLeg.value = "Boyne City to Petoskey";
+          } else if (record.stopId === "mackinac") {
+            currentLeg.value = "Petoskey to Mackinac Island";
+          } else if (record.stopId === "harrisville") {
+            currentLeg.value = "Mackinac Island to Harrisville";
+          } else if (record.stopId === "east-tawas") {
+            currentLeg.value = "Harrisville to East Tawas";
+          } else if (record.stopId === "bay-city") {
+            currentLeg.value = "East Tawas to Bay City";
+          }
+        }
+
         if (record.visibility) {
           decisionVisibility.value = record.visibility;
         }
+
+        syncQuickFromDecision();
 
         weatherNotes.value = [
           "NOAA " + record.period + ": " + record.shortForecast,
@@ -2758,6 +3322,7 @@
         saveDecisionFields();
         updateLastCheckedFromNoaa();
         updateSuggestedDecision();
+        updateLegRiskWarning();
         decisionUpdated.textContent = "NOAA updated " + record.updated;
         saveDecisionState();
 
@@ -2910,7 +3475,11 @@
 
       persistEditableFields();
 
+      syncQuickFromDecision();
       updateSuggestedDecision();
+      updateLegRiskWarning();
+      updateDepartureGuidance();
+      renderSnapshots();
 
       resetDashboard.addEventListener("click", function () {
         var confirmed = window.confirm("Reset saved dashboard fields, decision, contact, and checklist?");
@@ -2950,6 +3519,8 @@
         decisionDetail.textContent = "Safe range entered or manual GO selected.";
         decisionUpdated.textContent = "Decision not updated this session";
         updateSuggestedDecision();
+        updateLegRiskWarning();
+        updateDepartureGuidance();
       });
     })();
   </script>
