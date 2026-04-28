@@ -234,12 +234,57 @@
       margin-top: 22px;
     }
 
+    details.collapsible-section {
+      margin-top: 22px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    details.collapsible-section > summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 14px;
+      margin: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    details.collapsible-section > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.collapsible-section > summary::after {
+      content: "Show";
+      flex: 0 0 auto;
+      padding: 7px 10px;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--navy);
+      font-size: 0.86rem;
+      font-weight: 950;
+    }
+
+    details.collapsible-section[open] > summary::after {
+      content: "Hide";
+    }
+
+    .collapsible-content {
+      padding: 0 14px 14px;
+    }
+
     .section-title {
       display: flex;
       align-items: end;
       justify-content: space-between;
       gap: 14px;
       margin-bottom: 10px;
+    }
+
+    details.collapsible-section > summary.section-title {
+      align-items: center;
+      margin-bottom: 0;
     }
 
     h2 {
@@ -504,6 +549,41 @@
       font-size: clamp(2.4rem, 14vw, 5rem);
       font-weight: 1000;
       line-height: 0.95;
+    }
+
+    .suggested-decision {
+      display: grid;
+      gap: 4px;
+      margin: 12px 14px 0;
+      padding: 10px 12px;
+      border: 2px solid #8bd2b5;
+      border-radius: 8px;
+      background: #e9fff5;
+      color: #075133;
+      font-weight: 950;
+    }
+
+    .suggested-decision[data-suggestion="yellow"] {
+      border-color: #efcf82;
+      background: #fff6df;
+      color: #6f4b00;
+    }
+
+    .suggested-decision[data-suggestion="red"] {
+      border-color: #e7a19b;
+      background: #fff2f0;
+      color: #7d1d14;
+    }
+
+    .suggested-decision[data-suggestion="none"] {
+      border-color: var(--line);
+      background: #f5f8f9;
+      color: var(--muted);
+    }
+
+    .suggested-decision span {
+      font-size: 0.9rem;
+      font-weight: 820;
     }
 
     .decision-detail {
@@ -832,6 +912,124 @@
       font-weight: 950;
     }
 
+    .buoy-panel {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .buoy-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .buoy-toolbar button {
+      width: auto;
+      min-width: 178px;
+    }
+
+    .buoy-status {
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 850;
+    }
+
+    .buoy-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .buoy-card {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .buoy-card h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      line-height: 1.15;
+    }
+
+    .buoy-card h3 span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 850;
+    }
+
+    .buoy-readings {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .buoy-reading {
+      min-height: 62px;
+      padding: 9px;
+      border: 1px dashed #aebdc5;
+      border-radius: 8px;
+      background: #fbfdfd;
+    }
+
+    .buoy-reading b {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+    }
+
+    .buoy-reading span {
+      color: var(--ink);
+      font-size: 1.02rem;
+      font-weight: 950;
+    }
+
+    .buoy-meta {
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 800;
+    }
+
+    .buoy-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .buoy-actions .action-link {
+      flex: 1 1 190px;
+      min-height: 52px;
+      display: grid;
+      place-items: center;
+      font-size: 0.96rem;
+    }
+
+    .buoy-note {
+      padding: 10px 12px;
+      border-left: 4px solid var(--blue);
+      border-radius: 8px;
+      background: #eaf4f8;
+      color: #20323a;
+      font-size: 0.93rem;
+      font-weight: 820;
+    }
+
     .conditions {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -1048,6 +1246,10 @@
         grid-template-columns: repeat(2, 1fr);
       }
 
+      .buoy-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
       .fuel-grid,
       .risk-grid,
       .float-plan,
@@ -1080,8 +1282,19 @@
       }
 
       .action-grid,
-      .marina-actions {
+      .marina-actions,
+      .buoy-toolbar {
         grid-template-columns: 1fr;
+      }
+
+      .buoy-toolbar {
+        display: grid;
+      }
+
+      .buoy-toolbar button,
+      .buoy-actions button,
+      .buoy-actions .action-link {
+        width: 100%;
       }
 
       .leg {
@@ -1117,6 +1330,9 @@
     html[data-theme="dark"] .tabs a,
     html[data-theme="dark"] .weather,
     html[data-theme="dark"] .condition,
+    html[data-theme="dark"] .buoy-card,
+    html[data-theme="dark"] .buoy-toolbar,
+    html[data-theme="dark"] details.collapsible-section,
     html[data-theme="dark"] .check,
     html[data-theme="dark"] .stop,
     html[data-theme="dark"] .fuel-card,
@@ -1135,6 +1351,15 @@
 
     html[data-theme="dark"] .field {
       background: #0b202b;
+    }
+
+    html[data-theme="dark"] .buoy-reading {
+      background: #0b202b;
+    }
+
+    html[data-theme="dark"] .buoy-note {
+      background: #0b202b;
+      color: var(--ink);
     }
 
     html[data-theme="dark"] .marine-warning {
@@ -1172,6 +1397,26 @@
       color: #ffe3df;
     }
 
+    html[data-theme="dark"] .suggested-decision {
+      background: #082116;
+      color: #e8fff5;
+    }
+
+    html[data-theme="dark"] .suggested-decision[data-suggestion="yellow"] {
+      background: #2a2007;
+      color: #fff4cc;
+    }
+
+    html[data-theme="dark"] .suggested-decision[data-suggestion="red"] {
+      background: #2d0c09;
+      color: #ffe3df;
+    }
+
+    html[data-theme="dark"] .suggested-decision[data-suggestion="none"] {
+      background: #0b202b;
+      color: var(--muted);
+    }
+
     html[data-theme="dark"] .reference {
       background: #12313d;
       color: #dce8eb;
@@ -1185,7 +1430,8 @@
     html[data-theme="dark"] .total-route span,
     html[data-theme="dark"] .coords,
     html[data-theme="dark"] .tabs a,
-    html[data-theme="dark"] .pill {
+    html[data-theme="dark"] .pill,
+    html[data-theme="dark"] details.collapsible-section > summary::after {
       color: var(--ink);
     }
 
@@ -1238,10 +1484,8 @@
       #captain-flow,
       #today,
       #fuel,
-      #risk,
       #route,
       #weather,
-      #conditions,
       #safety,
       .reference {
         display: none !important;
@@ -1301,16 +1545,10 @@
 
   <nav class="tabs" aria-label="Dashboard sections">
     <a href="#decision">Decision</a>
-    <a href="#quick-actions">Actions</a>
-    <a href="#today">Today</a>
-    <a href="#fuel">Fuel</a>
-    <a href="#risk">Risk</a>
-    <a href="#float-plan">Float Plan</a>
-    <a href="#route">Route</a>
     <a href="#weather">Weather</a>
     <a href="#marine">Marine</a>
-    <a href="#conditions">Go / No-Go</a>
     <a href="#safety">Safety</a>
+    <a href="#emergency">Emergency</a>
   </nav>
 
   <main>
@@ -1323,15 +1561,15 @@
       <div class="captain-flow">
         <a class="flow-action" href="#weather">
           <b>1</b>
-          <span><strong>Check Conditions</strong>Wind (MPH), waves, visibility, notes.</span>
+          <span><strong>Check Weather</strong>Refresh NOAA point forecasts and log notes.</span>
+        </a>
+        <a class="flow-action" href="#marine">
+          <b>2</b>
+          <span><strong>Check Marine / Waves</strong>Verify forecasts, buoy pages, and visual conditions.</span>
         </a>
         <a class="flow-action" href="#decision">
-          <b>2</b>
-          <span><strong>Decide GO / CAUTION / NO-GO</strong>Use thresholds or manual call.</span>
-        </a>
-        <a class="flow-action" href="#quick-actions">
           <b>3</b>
-          <span><strong>Contact Help / Marina</strong>Emergency contact, marina calls, weather shortcut.</span>
+          <span><strong>Decide GO / CAUTION / NO-GO</strong>Use thresholds or manual call.</span>
         </a>
       </div>
     </section>
@@ -1347,6 +1585,11 @@
           <span class="decision-label" id="decisionLabel">GO</span>
           <span class="decision-detail" id="decisionDetail">Safe range entered or manual GO selected.</span>
           <span class="decision-updated" id="decisionUpdated">Decision not updated this session</span>
+        </div>
+
+        <div class="suggested-decision" id="suggestedDecision" data-suggestion="none" role="status" aria-live="polite">
+          <b id="suggestedDecisionLabel">Suggested: enter wind, waves, and visibility</b>
+          <span id="suggestedDecisionNote">Manual decision remains in control.</span>
         </div>
 
         <div class="decision-controls">
@@ -1386,6 +1629,15 @@
           </label>
         </div>
       </div>
+
+      <article class="reference" style="margin-top: 12px;">
+        <h3>Go / Caution / No-Go Reference</h3>
+        <ul>
+          <li><strong>GO:</strong> wind 10 mph or less, waves 1 ft or less, good visibility, stable forecast.</li>
+          <li><strong>CAUTION:</strong> wind 11-20 mph, waves 1-3 ft, reduced visibility, or building weather.</li>
+          <li><strong>NO-GO:</strong> wind over 20 mph, waves over 3 ft, storms, dense fog, advisory, crew concern, fuel, mechanical, or comms issue.</li>
+        </ul>
+      </article>
     </section>
 
     <section id="quick-actions" aria-labelledby="quick-actions-title">
@@ -1430,18 +1682,18 @@
 
         <article class="helm-card">
           <h3>Bright Sun Rule</h3>
-          <p>Use the green/yellow/red risk state, not small notes, to make the quick call. If the display is hard to read, conditions deserve a pause too.</p>
+          <p>Use the Decision panel, not scattered notes, to make the quick call. If the display is hard to read, conditions deserve a pause too.</p>
         </article>
       </div>
     </section>
 
-    <section id="today" aria-labelledby="today-title">
-      <div class="section-title">
+    <details id="today" class="collapsible-section">
+      <summary class="section-title">
         <h2 id="today-title">Today's Route</h2>
         <span class="small-note">Approximate nautical miles; verify against charts</span>
-      </div>
+      </summary>
 
-      <div class="leg-list">
+      <div class="collapsible-content leg-list">
         <article class="leg">
           <div>
             <strong>Boyne City / Harborage to Petoskey City Marina</strong>
@@ -1487,15 +1739,15 @@
           <span>229 nm</span>
         </div>
       </div>
-    </section>
+    </details>
 
-    <section id="fuel" aria-labelledby="fuel-title">
-      <div class="section-title">
+    <details id="fuel" class="collapsible-section">
+      <summary class="section-title">
         <h2 id="fuel-title">Fuel Planning</h2>
         <span class="small-note">Use your vessel's real burn rate</span>
-      </div>
+      </summary>
 
-      <div class="fuel-grid">
+      <div class="collapsible-content fuel-grid">
         <article class="fuel-card">
           <h3>Range Check</h3>
           <div class="formula">Usable range = fuel aboard x nm per gallon</div>
@@ -1508,74 +1760,47 @@
           <p>A practical Great Lakes rule is one third out, one third back or alternate, and one third reserve. Increase reserve for night, fog, strong wind, or limited fuel stops.</p>
         </article>
       </div>
-    </section>
+    </details>
 
-    <section id="risk" aria-labelledby="risk-title">
-      <div class="section-title">
-        <h2 id="risk-title">Weather Risk</h2>
-        <span class="small-note">Simple wind + wave + alert logic</span>
-      </div>
-
-      <div class="risk-grid">
-        <div class="risk-meter" id="riskMeter" data-risk="green" role="status" aria-live="polite">
-          <b>Current Risk</b>
-          <span class="risk-readout" id="riskReadout">GREEN</span>
-          <span id="riskText">Light wind, low waves, good visibility, no marine alerts.</span>
-          <div class="risk-buttons" aria-label="Set weather risk">
-            <button class="risk-button green" type="button" data-risk-choice="green">Green</button>
-            <button class="risk-button yellow" type="button" data-risk-choice="yellow">Yellow</button>
-            <button class="risk-button red" type="button" data-risk-choice="red">Red</button>
-          </div>
-        </div>
-
-        <article class="risk-card">
-          <h3>Risk Logic</h3>
-          <ul>
-            <li><strong>Green:</strong> wind 10 mph or less, waves 1 ft or less, no storms or fog.</li>
-            <li><strong>Yellow:</strong> wind 11-20 mph, waves 1-3 ft, reduced visibility, or building weather.</li>
-            <li><strong>Red:</strong> wind over 20 mph, waves over 3 ft, thunderstorms, dense fog, or any advisory.</li>
-          </ul>
-        </article>
-      </div>
-    </section>
-
-    <section id="float-plan" aria-labelledby="float-plan-title">
-      <div class="section-title">
+    <details id="float-plan" class="collapsible-section">
+      <summary class="section-title">
         <h2 id="float-plan-title">Float Plan</h2>
         <span class="small-note">Leave this with a reliable shore contact</span>
+      </summary>
+
+      <div class="collapsible-content">
+        <div class="emergency-banner" id="emergency">
+          <b>Emergency VHF: Channel 16</b>
+          <span>Use Channel 16 for distress, urgency, and hailing. Keep a working radio within reach at the helm.</span>
+        </div>
+
+        <div class="float-plan" style="margin-top: 12px;">
+          <div class="plan-field"><b>Vessel</b><span>Name, registration, length, color, MMSI</span></div>
+          <div class="plan-field"><b>People Aboard</b><span>Names, phone numbers, medical concerns</span></div>
+          <div class="plan-field"><b>Route</b><span>Planned leg, alternates, and destination marina</span></div>
+          <div class="plan-field"><b>Timing</b><span>Departure, check-in points, ETA, overdue time</span></div>
+          <div class="plan-field"><b>Comms</b><span>VHF, cell phones, tracker, emergency contacts</span></div>
+          <div class="plan-field"><b>Action If Overdue</b><span>Who to call first, then marina, Coast Guard, or 911</span></div>
+        </div>
+
+        <article class="print-card" style="margin-top: 12px;">
+          <h3>Print / Save Float Plan</h3>
+          <p>Use this area for the copy you send or print for your shore contact. The print button hides the rest of the dashboard.</p>
+          <label class="form-label">Float Plan Notes
+            <textarea id="floatPlanNotes" placeholder="Vessel, crew, planned stops, ETAs, alternates, overdue action, and contact numbers."></textarea>
+          </label>
+          <button id="printFloatPlan" type="button" style="margin-top: 10px;">Print / Save PDF</button>
+        </article>
       </div>
+    </details>
 
-      <div class="emergency-banner" id="emergency">
-        <b>Emergency VHF: Channel 16</b>
-        <span>Use Channel 16 for distress, urgency, and hailing. Keep a working radio within reach at the helm.</span>
-      </div>
-
-      <div class="float-plan" style="margin-top: 12px;">
-        <div class="plan-field"><b>Vessel</b><span>Name, registration, length, color, MMSI</span></div>
-        <div class="plan-field"><b>People Aboard</b><span>Names, phone numbers, medical concerns</span></div>
-        <div class="plan-field"><b>Route</b><span>Planned leg, alternates, and destination marina</span></div>
-        <div class="plan-field"><b>Timing</b><span>Departure, check-in points, ETA, overdue time</span></div>
-        <div class="plan-field"><b>Comms</b><span>VHF, cell phones, tracker, emergency contacts</span></div>
-        <div class="plan-field"><b>Action If Overdue</b><span>Who to call first, then marina, Coast Guard, or 911</span></div>
-      </div>
-
-      <article class="print-card" style="margin-top: 12px;">
-        <h3>Print / Save Float Plan</h3>
-        <p>Use this area for the copy you send or print for your shore contact. The print button hides the rest of the dashboard.</p>
-        <label class="form-label">Float Plan Notes
-          <textarea id="floatPlanNotes" placeholder="Vessel, crew, planned stops, ETAs, alternates, overdue action, and contact numbers."></textarea>
-        </label>
-        <button id="printFloatPlan" type="button" style="margin-top: 10px;">Print / Save PDF</button>
-      </article>
-    </section>
-
-    <section id="route" aria-labelledby="route-title">
-      <div class="section-title">
+    <details id="route" class="collapsible-section">
+      <summary class="section-title">
         <h2 id="route-title">Route Stops</h2>
         <span class="small-note">Coordinates in degrees + minutes</span>
-      </div>
+      </summary>
 
-      <div class="route">
+      <div class="collapsible-content route">
         <article class="stop">
           <div class="stop-number">1</div>
           <div>
@@ -1683,7 +1908,6 @@
       <div class="noaa-tools">
         <button id="refreshNoaaWeather" type="button">Refresh NOAA Weather</button>
         <div class="noaa-status" id="noaaStatus" role="status" aria-live="polite">NOAA weather not loaded yet.</div>
-        <div class="marine-warning">Verify marine conditions separately with the NOAA marine forecast, buoy reports, radar, and what you can see from the helm.</div>
       </div>
 
       <article class="log-card" style="margin-bottom: 12px;">
@@ -1692,29 +1916,12 @@
           <label class="form-label">Time
             <input id="weatherTime" type="text" placeholder="0930">
           </label>
-          <label class="form-label">Location
+          <label class="form-label">Area / source
             <input id="weatherLocation" type="text" placeholder="Petoskey / offshore">
-          </label>
-          <label class="form-label">Wind (MPH)
-            <input id="weatherWind" type="text" placeholder="10 to 15 mph NW">
-            <span class="wind-interpretation" id="weatherWindMeaning">Wind feel: enter MPH</span>
-          </label>
-          <label class="form-label">Waves
-            <input id="weatherWaves" type="text" placeholder="1-2 ft">
-          </label>
-          <label class="form-label">Visibility
-            <input id="weatherVisibility" type="text" placeholder="Clear / haze / fog">
-          </label>
-          <label class="form-label">Risk
-            <select id="weatherRisk">
-              <option>Green</option>
-              <option>Yellow</option>
-              <option>Red</option>
-            </select>
           </label>
         </div>
         <label class="form-label" style="margin-top: 10px;">Notes
-          <textarea id="weatherNotes" placeholder="Radar, clouds, barometer, crew condition, alternate decision."></textarea>
+          <textarea id="weatherNotes" placeholder="Radar, clouds, barometer, alerts, crew condition, alternates, or NOAA forecast notes."></textarea>
         </label>
       </article>
 
@@ -1831,6 +2038,48 @@
 
       <div class="marine-warning">Do not rely on point forecast for waves. Verify NOAA marine forecast, buoy data, and visual conditions.</div>
 
+      <article class="buoy-panel" aria-labelledby="buoy-title">
+        <div class="buoy-toolbar">
+          <div>
+            <h3 id="buoy-title">NOAA NDBC Buoy Data</h3>
+            <div class="buoy-status">Open official NDBC pages and enter readings manually.</div>
+          </div>
+          <a class="action-link primary" href="#buoy-links">Open Buoy Links</a>
+        </div>
+
+        <div class="buoy-note">Open the NDBC station page, read wave height, period, wind, and water temperature, then enter those values in the Manual Marine Log below.</div>
+        <div class="buoy-note">Automatic buoy import requires a small proxy/server or GitHub Action cache.</div>
+
+        <div class="buoy-grid" id="buoy-links">
+          <article class="buoy-card" data-buoy-card="45163">
+            <h3>45163 Saginaw Bay <span>Inner Saginaw Bay near the Bay City leg</span></h3>
+            <div class="buoy-actions">
+              <a class="action-link" href="https://www.ndbc.noaa.gov/station_page.php?station=45163" target="_blank" rel="noopener">Open NDBC 45163</a>
+              <button type="button" data-buoy-source="45163">Use 45163 as Source</button>
+              <span class="copy-confirmation" data-buoy-confirmation></span>
+            </div>
+          </article>
+
+          <article class="buoy-card" data-buoy-card="45162">
+            <h3>45162 Thunder Bay <span>Lake Huron exposure north of Harrisville</span></h3>
+            <div class="buoy-actions">
+              <a class="action-link" href="https://www.ndbc.noaa.gov/station_page.php?station=45162" target="_blank" rel="noopener">Open NDBC 45162</a>
+              <button type="button" data-buoy-source="45162">Use 45162 as Source</button>
+              <span class="copy-confirmation" data-buoy-confirmation></span>
+            </div>
+          </article>
+
+          <article class="buoy-card" data-buoy-card="45149">
+            <h3>45149 Southern Lake Huron <span>Open-water Lake Huron reference south of the route</span></h3>
+            <div class="buoy-actions">
+              <a class="action-link" href="https://www.ndbc.noaa.gov/station_page.php?station=45149" target="_blank" rel="noopener">Open NDBC 45149</a>
+              <button type="button" data-buoy-source="45149">Use 45149 as Source</button>
+              <span class="copy-confirmation" data-buoy-confirmation></span>
+            </div>
+          </article>
+        </div>
+      </article>
+
       <article class="log-card" style="margin-top: 12px;">
         <h3>Manual Marine Log</h3>
         <div class="log-grid">
@@ -1845,6 +2094,9 @@
           </label>
           <label class="form-label">Water temperature
             <input id="marineWaterTemperature" type="text" placeholder="62°F">
+          </label>
+          <label class="form-label">Wind
+            <input id="marineWind" type="text" placeholder="12 mph">
           </label>
           <label class="form-label">Buoy / marine forecast source
             <input id="marineSource" type="text" placeholder="NDBC 45163 / NOAA Lake Huron">
@@ -1863,86 +2115,43 @@
       </div>
     </section>
 
-    <section id="conditions" aria-labelledby="conditions-title">
-      <div class="section-title">
-        <h2 id="conditions-title">Go / No-Go Conditions</h2>
-        <span class="small-note">Adjust thresholds for vessel, crew, and route leg</span>
-      </div>
-
-      <div class="conditions">
-        <article class="condition go">
-          <h3>Go</h3>
-          <ul>
-            <li>Forecast stable for full leg plus reserve.</li>
-            <li>Wind and waves inside vessel limits.</li>
-            <li>Visibility, fuel, crew, and daylight all acceptable.</li>
-          </ul>
-        </article>
-
-        <article class="condition caution">
-          <h3>Caution</h3>
-          <ul>
-            <li>Building wind, steep chop, storms nearby, or fog possible.</li>
-            <li>Alternate harbor identified and reachable.</li>
-            <li>Recheck forecast before departure and underway.</li>
-          </ul>
-        </article>
-
-        <article class="condition no-go">
-          <h3>No-Go</h3>
-          <ul>
-            <li>Small Craft Advisory or worse for the leg.</li>
-            <li>Thunderstorms, dense fog, unsafe seas, or crew concern.</li>
-            <li>Mechanical, navigation, fuel, or communication issue unresolved.</li>
-          </ul>
-        </article>
-      </div>
-
-      <div class="warning-panel" style="margin-top: 12px;">
-        <h3>Stop and Reassess</h3>
-        <ul>
-          <li>Turn back, divert, or hold position if wind, waves, fog, storms, fuel burn, crew condition, or mechanical behavior changes faster than expected.</li>
-          <li>Do not press a long open-water leg because a slip is reserved or the schedule is tight.</li>
-          <li>If any essential system is questionable, the decision is no-go until it is understood and fixed.</li>
-        </ul>
-      </div>
-    </section>
-
-    <section id="safety" aria-labelledby="safety-title">
-      <div class="section-title">
+    <details id="safety" class="collapsible-section">
+      <summary class="section-title">
         <h2 id="safety-title">Pre-Departure Go / No-Go Checklist</h2>
         <span class="small-note">Any unchecked critical item means delay departure</span>
-      </div>
+      </summary>
 
-      <div class="checklist">
-        <label class="check"><input type="checkbox"><span>Weather, marine forecast, radar, and alerts checked.</span></label>
-        <label class="check"><input type="checkbox"><span>Float plan filed with route, ETAs, crew, and contact numbers.</span></label>
-        <label class="check"><input type="checkbox"><span>Life jackets accessible and correct sizes for all aboard.</span></label>
-        <label class="check"><input type="checkbox"><span>VHF radio tested on working channel; Channel 16 monitored for emergencies.</span></label>
-        <label class="check"><input type="checkbox"><span>Navigation lights, horn, compass/GPS, paper or offline charts, and route reviewed.</span></label>
-        <label class="check"><input type="checkbox"><span>Fuel plan confirmed with reserve for delays or diversion.</span></label>
-        <label class="check"><input type="checkbox"><span>Charts, route, hazards, bridges, and alternate harbors reviewed.</span></label>
-        <label class="check"><input type="checkbox"><span>Throwable device, flares/signals, first aid, fire extinguishers ready.</span></label>
-        <label class="check"><input type="checkbox"><span>Dock lines, fenders, anchor, tool kit, and spare parts ready.</span></label>
-        <label class="check"><input type="checkbox"><span>Crew briefing complete: roles, man-overboard, radio, and emergency plan.</span></label>
-      </div>
+      <div class="collapsible-content">
+        <div class="checklist">
+          <label class="check"><input type="checkbox"><span>Weather, marine forecast, radar, and alerts checked.</span></label>
+          <label class="check"><input type="checkbox"><span>Float plan filed with route, ETAs, crew, and contact numbers.</span></label>
+          <label class="check"><input type="checkbox"><span>Life jackets accessible and correct sizes for all aboard.</span></label>
+          <label class="check"><input type="checkbox"><span>VHF radio tested on working channel; Channel 16 monitored for emergencies.</span></label>
+          <label class="check"><input type="checkbox"><span>Navigation lights, horn, compass/GPS, paper or offline charts, and route reviewed.</span></label>
+          <label class="check"><input type="checkbox"><span>Fuel plan confirmed with reserve for delays or diversion.</span></label>
+          <label class="check"><input type="checkbox"><span>Charts, route, hazards, bridges, and alternate harbors reviewed.</span></label>
+          <label class="check"><input type="checkbox"><span>Throwable device, flares/signals, first aid, fire extinguishers ready.</span></label>
+          <label class="check"><input type="checkbox"><span>Dock lines, fenders, anchor, tool kit, and spare parts ready.</span></label>
+          <label class="check"><input type="checkbox"><span>Crew briefing complete: roles, man-overboard, radio, and emergency plan.</span></label>
+        </div>
 
-      <div class="checklist-group">
-        <h3>Bilge, Engine Room, Batteries</h3>
-        <label class="check"><input type="checkbox"><span>Bilge clean enough to inspect; no unusual water, oil, fuel, or coolant present.</span></label>
-        <label class="check"><input type="checkbox"><span>Bilge pumps and float switches tested; high-water alarm working if installed.</span></label>
-        <label class="check"><input type="checkbox"><span>Engine room inspected: belts, hoses, clamps, strainers, fluids, leaks, and odors checked.</span></label>
-        <label class="check"><input type="checkbox"><span>Batteries secured, terminals tight, selector set correctly, house/start voltage acceptable.</span></label>
-      </div>
+        <div class="checklist-group">
+          <h3>Bilge, Engine Room, Batteries</h3>
+          <label class="check"><input type="checkbox"><span>Bilge clean enough to inspect; no unusual water, oil, fuel, or coolant present.</span></label>
+          <label class="check"><input type="checkbox"><span>Bilge pumps and float switches tested; high-water alarm working if installed.</span></label>
+          <label class="check"><input type="checkbox"><span>Engine room inspected: belts, hoses, clamps, strainers, fluids, leaks, and odors checked.</span></label>
+          <label class="check"><input type="checkbox"><span>Batteries secured, terminals tight, selector set correctly, house/start voltage acceptable.</span></label>
+        </div>
 
-      <div class="checklist-group">
-        <h3>Seacocks and Blower</h3>
-        <label class="check"><input type="checkbox"><span>Seacocks checked in correct positions; handles accessible; crew knows emergency closures.</span></label>
-        <label class="check"><input type="checkbox"><span>Raw-water intake open before engine start; cooling water flow confirmed after start.</span></label>
-        <label class="check"><input type="checkbox"><span>Gasoline engine blower run before start and after fueling; sniff test clear of fuel vapor.</span></label>
-        <label class="check"><input type="checkbox"><span>Fuel shutoffs, fire extinguishers, and engine shutdown procedure reviewed.</span></label>
+        <div class="checklist-group">
+          <h3>Seacocks and Blower</h3>
+          <label class="check"><input type="checkbox"><span>Seacocks checked in correct positions; handles accessible; crew knows emergency closures.</span></label>
+          <label class="check"><input type="checkbox"><span>Raw-water intake open before engine start; cooling water flow confirmed after start.</span></label>
+          <label class="check"><input type="checkbox"><span>Gasoline engine blower run before start and after fueling; sniff test clear of fuel vapor.</span></label>
+          <label class="check"><input type="checkbox"><span>Fuel shutoffs, fire extinguishers, and engine shutdown procedure reviewed.</span></label>
+        </div>
       </div>
-    </section>
+    </details>
 
     <section aria-labelledby="reference-title">
       <div class="section-title">
@@ -1954,9 +2163,9 @@
     </section>
   </main>
   <nav class="bottom-nav" aria-label="Primary helm navigation">
-    <a href="#weather">Check</a>
     <a href="#decision">Decide</a>
-    <a href="#quick-actions">Help</a>
+    <a href="#weather">Weather</a>
+    <a href="#marine">Marine</a>
     <a href="#safety">Safety</a>
     <a class="emergency-link" href="#emergency">Emergency</a>
   </nav>
@@ -1972,6 +2181,9 @@
       var decisionLabel = document.getElementById("decisionLabel");
       var decisionDetail = document.getElementById("decisionDetail");
       var decisionUpdated = document.getElementById("decisionUpdated");
+      var suggestedDecision = document.getElementById("suggestedDecision");
+      var suggestedDecisionLabel = document.getElementById("suggestedDecisionLabel");
+      var suggestedDecisionNote = document.getElementById("suggestedDecisionNote");
       var decisionLocation = document.getElementById("decisionLocation");
       var decisionWind = document.getElementById("decisionWind");
       var decisionWindMeaning = document.getElementById("decisionWindMeaning");
@@ -2064,6 +2276,32 @@
         window.print();
       });
 
+      function openHashTarget() {
+        var targetId = window.location.hash ? window.location.hash.slice(1) : "";
+
+        if (!targetId) {
+          return;
+        }
+
+        var target = document.getElementById(targetId);
+
+        if (!target) {
+          return;
+        }
+
+        var parentDetails = target.tagName === "DETAILS" ? target : target.closest("details.collapsible-section");
+
+        if (parentDetails) {
+          parentDetails.open = true;
+          window.setTimeout(function () {
+            target.scrollIntoView({ block: "start" });
+          }, 0);
+        }
+      }
+
+      window.addEventListener("hashchange", openHashTarget);
+      openHashTarget();
+
       function updateEmergencyContact(value) {
         var cleanValue = (value || "").trim();
         emergencyContactNumber.value = cleanValue;
@@ -2139,6 +2377,10 @@
         return Number.isFinite(value) ? value : null;
       }
 
+      function currentManualDecision() {
+        return decisionPanel.getAttribute("data-decision") || "green";
+      }
+
       function windMeaningFromMPH(speed) {
         if (!Number.isFinite(speed)) {
           return "Wind feel: enter MPH";
@@ -2199,30 +2441,56 @@
       window.formatWindSpeedMPH = formatWindSpeedMPH;
       window.formatNOAAWindSpeedMPH = formatNOAAWindSpeedMPH;
 
-      function evaluateDecision() {
-        var wind = numberFromInput(decisionWind);
-        var waves = numberFromInput(decisionWaves);
-        var visibility = numberFromInput(decisionVisibility);
+      function suggestedDecisionFromInputs(wind, waves, visibility) {
         var hasAnyValue = wind !== null || waves !== null || visibility !== null;
+        var hasAllValues = wind !== null && waves !== null && visibility !== null;
 
         if (!hasAnyValue) {
-          decisionWindMeaning.textContent = windMeaningFromMPH(wind);
-          return;
+          return "none";
         }
 
-        decisionWindMeaning.textContent = windMeaningFromMPH(wind);
-
         if ((wind !== null && wind > 20) || (waves !== null && waves > 3) || (visibility !== null && visibility < 2)) {
-          setDecision("red", "Automatic threshold", true);
-          return;
+          return "red";
         }
 
         if ((wind !== null && wind > 10) || (waves !== null && waves > 1) || (visibility !== null && visibility < 5)) {
-          setDecision("yellow", "Automatic threshold", true);
+          return "yellow";
+        }
+
+        if (hasAllValues && wind <= 10 && waves <= 1 && visibility >= 5) {
+          return "green";
+        }
+
+        return "none";
+      }
+
+      function updateSuggestedDecision() {
+        var wind = numberFromInput(decisionWind);
+        var waves = numberFromInput(decisionWaves);
+        var visibility = numberFromInput(decisionVisibility);
+        var suggestion = suggestedDecisionFromInputs(wind, waves, visibility);
+        var labels = {
+          green: "GO",
+          yellow: "CAUTION",
+          red: "NO-GO",
+          none: "enter wind, waves, and visibility"
+        };
+
+        decisionWindMeaning.textContent = windMeaningFromMPH(wind);
+        suggestedDecision.setAttribute("data-suggestion", suggestion);
+        suggestedDecisionLabel.textContent = "Suggested: " + labels[suggestion];
+
+        if (suggestion === "none") {
+          suggestedDecisionNote.textContent = "Manual decision remains in control.";
           return;
         }
 
-        setDecision("green", "Automatic threshold", true);
+        if (currentManualDecision() !== suggestion) {
+          suggestedDecisionNote.textContent = "Manual decision differs from suggestion.";
+          return;
+        }
+
+        suggestedDecisionNote.textContent = "Manual decision matches suggestion.";
       }
 
       if (savedDecision) {
@@ -2242,11 +2510,12 @@
       document.querySelectorAll("[data-decision-choice]").forEach(function (button) {
         button.addEventListener("click", function () {
           setDecision(button.getAttribute("data-decision-choice"), "Manual selection", true);
+          updateSuggestedDecision();
         });
       });
 
       [decisionWind, decisionWaves, decisionVisibility].forEach(function (input) {
-        input.addEventListener("input", evaluateDecision);
+        input.addEventListener("input", updateSuggestedDecision);
       });
 
       decisionWind.addEventListener("change", function () {
@@ -2258,21 +2527,11 @@
         setDecision(currentDecision, "Reason updated", true);
       });
 
-      var riskMeter = document.getElementById("riskMeter");
-      var riskReadout = document.getElementById("riskReadout");
-      var riskText = document.getElementById("riskText");
-      var weatherWind = document.getElementById("weatherWind");
-      var weatherWindMeaning = document.getElementById("weatherWindMeaning");
       var weatherLocation = document.getElementById("weatherLocation");
-      var weatherVisibility = document.getElementById("weatherVisibility");
       var weatherNotes = document.getElementById("weatherNotes");
       var refreshNoaaWeather = document.getElementById("refreshNoaaWeather");
       var noaaStatus = document.getElementById("noaaStatus");
-      var riskMessages = {
-        green: "Light wind, low waves, good visibility, no marine alerts.",
-        yellow: "Marginal conditions. Recheck forecast, identify alternates, and reduce exposure.",
-        red: "Do not depart until the risk source clears and the forecast improves."
-      };
+      var marineSource = document.getElementById("marineSource");
 
       var noaaStops = [
         { id: "boyne", name: "Boyne City / Harborage", lat: 45.21, lon: -85.02 },
@@ -2426,8 +2685,6 @@
 
       function saveManualWeatherFields() {
         storageSet("helm-field-weatherLocation", weatherLocation.value);
-        storageSet("helm-field-weatherWind", weatherWind.value);
-        storageSet("helm-field-weatherVisibility", weatherVisibility.value);
         storageSet("helm-field-weatherNotes", weatherNotes.value);
       }
 
@@ -2472,8 +2729,6 @@
         }
 
         weatherLocation.value = record.name;
-        weatherWind.value = formatWindSpeedMPH(record.wind);
-        weatherWindMeaning.textContent = windMeaningFromMPH(maxWindMPHFromText(weatherWind.value));
 
         decisionLocation.value = record.name;
         decisionWind.value = String(maxWindMPHFromText(record.wind) || "");
@@ -2482,7 +2737,6 @@
         decisionTemperature.value = record.temperature !== "--" ? record.temperature : "";
 
         if (record.visibility) {
-          weatherVisibility.value = record.visibility;
           decisionVisibility.value = record.visibility;
         }
 
@@ -2503,7 +2757,7 @@
         saveManualWeatherFields();
         saveDecisionFields();
         updateLastCheckedFromNoaa();
-        evaluateDecision();
+        updateSuggestedDecision();
         decisionUpdated.textContent = "NOAA updated " + record.updated;
         saveDecisionState();
 
@@ -2601,21 +2855,22 @@
         });
       });
 
-      document.querySelectorAll("[data-risk-choice]").forEach(function (button) {
+      document.querySelectorAll("[data-buoy-source]").forEach(function (button) {
         button.addEventListener("click", function () {
-          var risk = button.getAttribute("data-risk-choice");
-          riskMeter.setAttribute("data-risk", risk);
-          riskReadout.textContent = risk.toUpperCase();
-          riskText.textContent = riskMessages[risk];
+          var stationId = button.getAttribute("data-buoy-source");
+          var confirmation = button.parentElement ? button.parentElement.querySelector("[data-buoy-confirmation]") : null;
+
+          marineSource.value = "NDBC " + stationId + " manual entry";
+          storageSet("helm-field-marineSource", marineSource.value);
+
+          if (confirmation) {
+            confirmation.textContent = "Source set. Enter readings in the Marine Log.";
+            window.setTimeout(function () {
+              confirmation.textContent = "";
+            }, 4000);
+          }
         });
       });
-
-      if (weatherWind) {
-        weatherWind.addEventListener("change", function () {
-          weatherWind.value = formatWindSpeedMPH(weatherWind.value);
-          weatherWindMeaning.textContent = windMeaningFromMPH(maxWindMPHFromText(weatherWind.value));
-        });
-      }
 
       function persistEditableFields() {
         document.querySelectorAll("input, textarea, select").forEach(function (field, index) {
@@ -2655,13 +2910,7 @@
 
       persistEditableFields();
 
-      if (weatherWind && weatherWind.value) {
-        weatherWind.value = formatWindSpeedMPH(weatherWind.value);
-        weatherWindMeaning.textContent = windMeaningFromMPH(maxWindMPHFromText(weatherWind.value));
-        storageSet("helm-field-weatherWind", weatherWind.value);
-      }
-
-      decisionWindMeaning.textContent = windMeaningFromMPH(numberFromInput(decisionWind));
+      updateSuggestedDecision();
 
       resetDashboard.addEventListener("click", function () {
         var confirmed = window.confirm("Reset saved dashboard fields, decision, contact, and checklist?");
@@ -2691,15 +2940,16 @@
         });
 
         setTheme("light");
+        document.querySelectorAll("details.collapsible-section").forEach(function (details) {
+          details.open = false;
+        });
         lastChecked.textContent = "Not checked this session";
         updateEmergencyContact("");
         decisionPanel.setAttribute("data-decision", "green");
         decisionLabel.textContent = "GO";
         decisionDetail.textContent = "Safe range entered or manual GO selected.";
         decisionUpdated.textContent = "Decision not updated this session";
-        riskMeter.setAttribute("data-risk", "green");
-        riskReadout.textContent = "GREEN";
-        riskText.textContent = riskMessages.green;
+        updateSuggestedDecision();
       });
     })();
   </script>
