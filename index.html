@@ -507,12 +507,18 @@
     }
 
     .decision-panel {
-      border: 3px solid #249563;
+      border: 3px solid var(--line);
       border-radius: 8px;
-      background: #f3fff9;
-      color: #063b26;
+      background: #f5f8f9;
+      color: #263941;
       box-shadow: var(--shadow);
       overflow: hidden;
+    }
+
+    .decision-panel[data-decision="green"] {
+      border-color: #249563;
+      background: #f3fff9;
+      color: #063b26;
     }
 
     .decision-panel[data-decision="yellow"] {
@@ -531,6 +537,11 @@
       display: grid;
       gap: 4px;
       padding: 18px;
+      background: #4c5d64;
+      color: #fff;
+    }
+
+    .decision-panel[data-decision="green"] .decision-banner {
       background: #09643f;
       color: #fff;
     }
@@ -549,6 +560,10 @@
       font-size: clamp(2.4rem, 14vw, 5rem);
       font-weight: 1000;
       line-height: 0.95;
+    }
+
+    .decision-panel[data-decision="none"] .decision-label {
+      font-size: clamp(1.9rem, 8vw, 3.4rem);
     }
 
     .suggested-decision {
@@ -603,6 +618,72 @@
       display: block;
     }
 
+    .safety-warning {
+      display: none;
+      margin: 10px 14px 0;
+      padding: 11px 12px;
+      border: 2px solid #efcf82;
+      border-left-width: 6px;
+      border-radius: 8px;
+      background: #fff8e8;
+      color: #553900;
+      font-weight: 950;
+    }
+
+    .safety-warning.visible {
+      display: block;
+    }
+
+    .safety-warning.critical {
+      border-color: #e7a19b;
+      background: #fff2f0;
+      color: #64110b;
+    }
+
+    .alerts-banner {
+      display: grid;
+      gap: 8px;
+      margin: 10px 14px 0;
+      padding: 12px;
+      border: 2px solid var(--line);
+      border-left: 6px solid #60727b;
+      border-radius: 8px;
+      background: #f5f8f9;
+      color: #263941;
+      font-weight: 900;
+    }
+
+    .alerts-banner[data-alert-level="yellow"] {
+      border-color: #efcf82;
+      border-left-color: #bd850f;
+      background: #fff8e8;
+      color: #553900;
+    }
+
+    .alerts-banner[data-alert-level="red"] {
+      border-color: #e7a19b;
+      border-left-color: #b42318;
+      background: #fff2f0;
+      color: #64110b;
+    }
+
+    .alerts-banner h3 {
+      margin: 0;
+      font-size: 1.05rem;
+    }
+
+    .alerts-banner p {
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    .alerts-banner button {
+      justify-self: start;
+      min-height: 48px;
+      padding: 0 14px;
+      font-size: 0.95rem;
+    }
+
     .departure-guidance {
       display: grid;
       gap: 10px;
@@ -630,6 +711,11 @@
       border-color: var(--line);
       background: #f5f8f9;
       color: var(--muted);
+    }
+
+    .weather.stale {
+      border-color: #bd850f;
+      background: #fff8e8;
     }
 
     .departure-guidance h3 {
@@ -707,6 +793,13 @@
       gap: 8px;
     }
 
+    .quick-check-grid .priority-field input,
+    .quick-check-grid .priority-field select {
+      min-height: 64px;
+      font-size: 1.18rem;
+      font-weight: 950;
+    }
+
     .quick-check-actions {
       display: grid;
       grid-template-columns: 2fr 1fr 1fr;
@@ -726,6 +819,17 @@
     .quick-check-actions .secondary-action {
       border-color: var(--line);
       background: #fff;
+    }
+
+    .captain-responsibility {
+      margin: 10px 14px 0;
+      padding: 12px;
+      border: 2px solid #60727b;
+      border-left: 6px solid var(--blue);
+      border-radius: 8px;
+      background: #eef6f8;
+      color: #20323a;
+      font-weight: 950;
     }
 
     .snapshots-panel {
@@ -1545,6 +1649,11 @@
     }
 
     html[data-theme="dark"] .decision-panel {
+      background: #0b202b;
+      color: var(--ink);
+    }
+
+    html[data-theme="dark"] .decision-panel[data-decision="green"] {
       background: #082116;
       color: #e8fff5;
     }
@@ -1582,6 +1691,36 @@
     html[data-theme="dark"] .leg-warning {
       background: #2a2007;
       color: #fff4cc;
+    }
+
+    html[data-theme="dark"] .safety-warning {
+      background: #2a2007;
+      color: #fff4cc;
+    }
+
+    html[data-theme="dark"] .safety-warning.critical {
+      background: #2d0c09;
+      color: #ffe3df;
+    }
+
+    html[data-theme="dark"] .alerts-banner {
+      background: #0b202b;
+      color: var(--ink);
+    }
+
+    html[data-theme="dark"] .captain-responsibility {
+      background: #0b202b;
+      color: var(--ink);
+    }
+
+    html[data-theme="dark"] .alerts-banner[data-alert-level="yellow"] {
+      background: #2a2007;
+      color: #fff4cc;
+    }
+
+    html[data-theme="dark"] .alerts-banner[data-alert-level="red"] {
+      background: #2d0c09;
+      color: #ffe3df;
     }
 
     html[data-theme="dark"] .departure-guidance {
@@ -1750,7 +1889,14 @@
 
       <div class="quick-check-panel">
         <div class="quick-check-grid">
-          <label class="form-label">Current Leg
+          <label class="form-label priority-field">Boat Profile
+            <select id="boatProfile">
+              <option>Small open boat</option>
+              <option selected>Typical cruiser 25-35 ft</option>
+              <option>Larger well-equipped cruiser</option>
+            </select>
+          </label>
+          <label class="form-label priority-field">Current Leg
             <select id="currentLeg">
               <option value="">Select leg</option>
               <option>Boyne City to Petoskey</option>
@@ -1760,14 +1906,30 @@
               <option>East Tawas to Bay City</option>
             </select>
           </label>
-          <label class="form-label">Wind (MPH)
+          <label class="form-label priority-field">Wind (MPH)
             <input id="quickWind" type="number" inputmode="decimal" min="0" step="1" placeholder="10">
           </label>
-          <label class="form-label">Waves ft
+          <label class="form-label priority-field">Gusts (MPH)
+            <input id="quickGusts" type="number" inputmode="decimal" min="0" step="1" placeholder="15">
+          </label>
+          <label class="form-label priority-field">Waves ft
             <input id="quickWaves" type="number" inputmode="decimal" min="0" step="0.5" placeholder="1">
           </label>
-          <label class="form-label">Visibility nm
+          <label class="form-label priority-field">Wave period sec
+            <input id="quickWavePeriod" type="number" inputmode="decimal" min="0" step="1" placeholder="5">
+          </label>
+          <label class="form-label priority-field">Visibility nm
             <input id="quickVisibility" type="number" inputmode="decimal" min="0" step="0.5" placeholder="5">
+          </label>
+          <label class="form-label priority-field">Water temp
+            <input id="quickWaterTemp" type="number" inputmode="decimal" min="0" step="1" placeholder="62">
+          </label>
+          <label class="form-label priority-field">Conditions trend
+            <select id="conditionsTrend">
+              <option>Stable</option>
+              <option>Improving</option>
+              <option>Worsening</option>
+            </select>
           </label>
         </div>
 
@@ -1776,6 +1938,8 @@
           <button class="secondary-action" id="saveSnapshot" type="button">Save Snapshot</button>
           <button class="secondary-action" id="startFresh" type="button">Start Fresh</button>
         </div>
+
+        <p class="small-note">Short wave periods can make waves steeper. Water below 60 F increases cold-water risk; below 50 F requires strong immersion-gear planning.</p>
       </div>
 
       <div class="snapshots-panel" aria-labelledby="snapshots-title">
@@ -1819,10 +1983,10 @@
         <span class="small-note">Fast manual call plus automatic thresholds</span>
       </div>
 
-      <div class="decision-panel" id="decisionPanel" data-decision="green">
+      <div class="decision-panel" id="decisionPanel" data-decision="none">
         <div class="decision-banner">
-          <span class="decision-label" id="decisionLabel">GO</span>
-          <span class="decision-detail" id="decisionDetail">Safe range entered or manual GO selected.</span>
+          <span class="decision-label" id="decisionLabel">PENDING — ENTER CONDITIONS</span>
+          <span class="decision-detail" id="decisionDetail">Enter wind, waves, visibility, and marine conditions before deciding.</span>
           <span class="decision-updated" id="decisionUpdated">Decision not updated this session</span>
         </div>
 
@@ -1831,7 +1995,19 @@
           <span id="suggestedDecisionNote">Manual decision remains in control.</span>
         </div>
 
+        <div class="captain-responsibility">This is a decision aid only. You are the captain. Verify NOAA marine forecast, buoy data, visual conditions, fuel, daylight, crew, and vessel readiness.</div>
+
+        <article class="alerts-banner" id="alertsBanner" data-alert-level="none" aria-labelledby="alerts-title">
+          <h3 id="alerts-title">NOAA Alerts</h3>
+          <p id="alertsText">NOAA alerts not checked yet.</p>
+          <button id="refreshNoaaAlerts" type="button">Refresh NOAA Alerts</button>
+        </article>
+
         <div class="leg-warning" id="legRiskWarning" role="status" aria-live="polite"></div>
+        <div class="safety-warning" id="staleDecisionWarning" role="status" aria-live="polite"></div>
+        <div class="safety-warning" id="manualConflictWarning" role="status" aria-live="polite"></div>
+        <div class="safety-warning" id="wavePeriodWarning" role="status" aria-live="polite"></div>
+        <div class="safety-warning" id="waterTempWarning" role="status" aria-live="polite"></div>
 
         <article class="departure-guidance" id="departureGuidance" data-guidance="none" aria-labelledby="departure-guidance-title">
           <h3 id="departure-guidance-title">Departure Guidance</h3>
@@ -2432,16 +2608,28 @@
       var suggestedDecision = document.getElementById("suggestedDecision");
       var suggestedDecisionLabel = document.getElementById("suggestedDecisionLabel");
       var suggestedDecisionNote = document.getElementById("suggestedDecisionNote");
+      var alertsBanner = document.getElementById("alertsBanner");
+      var alertsText = document.getElementById("alertsText");
+      var refreshNoaaAlerts = document.getElementById("refreshNoaaAlerts");
       var legRiskWarning = document.getElementById("legRiskWarning");
+      var staleDecisionWarning = document.getElementById("staleDecisionWarning");
+      var manualConflictWarning = document.getElementById("manualConflictWarning");
+      var wavePeriodWarning = document.getElementById("wavePeriodWarning");
+      var waterTempWarning = document.getElementById("waterTempWarning");
       var departureGuidance = document.getElementById("departureGuidance");
       var departureGuidanceText = document.getElementById("departureGuidanceText");
       var departureLegWarning = document.getElementById("departureLegWarning");
       var departureRecheck = document.getElementById("departureRecheck");
       var decisionLocation = document.getElementById("decisionLocation");
+      var boatProfile = document.getElementById("boatProfile");
       var currentLeg = document.getElementById("currentLeg");
       var quickWind = document.getElementById("quickWind");
+      var quickGusts = document.getElementById("quickGusts");
       var quickWaves = document.getElementById("quickWaves");
+      var quickWavePeriod = document.getElementById("quickWavePeriod");
       var quickVisibility = document.getElementById("quickVisibility");
+      var quickWaterTemp = document.getElementById("quickWaterTemp");
+      var conditionsTrend = document.getElementById("conditionsTrend");
       var updateGuidance = document.getElementById("updateGuidance");
       var saveSnapshot = document.getElementById("saveSnapshot");
       var clearSnapshots = document.getElementById("clearSnapshots");
@@ -2460,6 +2648,9 @@
       var savedCheck = null;
       var savedDecision = null;
       var savedEmergencyContact = null;
+      var currentDecisionUpdatedAt = null;
+      var activeNoaaAlertLevel = "none";
+      var activeNoaaAlertMessage = "";
       var snapshots = [];
       var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
 
@@ -2476,6 +2667,8 @@
         savedEmergencyContact = null;
         snapshots = [];
       }
+
+      currentDecisionUpdatedAt = savedDecision && savedDecision.updatedAt ? savedDecision.updatedAt : null;
 
       if (!Array.isArray(snapshots)) {
         snapshots = [];
@@ -2553,7 +2746,8 @@
           return [
             '<article class="snapshot-card">',
             '<b>' + escapeHtml(snapshot.time) + ' | ' + escapeHtml(snapshot.currentLeg || "No leg selected") + '</b>',
-            '<span>Wind ' + escapeHtml(snapshot.wind || "--") + ' mph | Waves ' + escapeHtml(snapshot.waves || "--") + ' ft | Visibility ' + escapeHtml(snapshot.visibility || "--") + ' nm</span>',
+            '<span>Wind ' + escapeHtml(snapshot.wind || "--") + ' mph | Gusts ' + escapeHtml(snapshot.gusts || "--") + ' mph | Waves ' + escapeHtml(snapshot.waves || "--") + ' ft @ ' + escapeHtml(snapshot.wavePeriod || "--") + ' sec</span>',
+            '<span>Visibility ' + escapeHtml(snapshot.visibility || "--") + ' nm | Water ' + escapeHtml(snapshot.waterTemp || "--") + '°F | Trend ' + escapeHtml(snapshot.trend || "--") + '</span>',
             '<span>Manual: ' + escapeHtml(snapshot.manualDecision) + ' | Suggested: ' + escapeHtml(snapshot.suggestedDecision) + '</span>',
             '<p>' + escapeHtml(snapshot.guidanceSummary) + '</p>',
             '</article>'
@@ -2571,8 +2765,16 @@
         storageSet("helm-last-checked", stamp);
       }
 
+      function updateDecisionTimestampOnly() {
+        currentDecisionUpdatedAt = new Date().toISOString();
+        decisionUpdated.textContent = "Updated " + formatDecisionTime(new Date(currentDecisionUpdatedAt));
+      }
+
       checkedNow.addEventListener("click", function () {
         updateLastCheckedNow();
+        updateDecisionTimestampOnly();
+        saveDecisionState();
+        updateStaleDecisionWarning();
       });
 
       printFloatPlan.addEventListener("click", function () {
@@ -2634,6 +2836,10 @@
       }
 
       function decisionCopy(decision, source) {
+        if (decision === "none") {
+          return "Enter wind, waves, visibility, and marine conditions before deciding.";
+        }
+
         if (decision === "red") {
           return source + ": no-go threshold reached.";
         }
@@ -2647,21 +2853,26 @@
 
       function setDecision(decision, source, saveInputs) {
         var labels = {
+          none: "PENDING — ENTER CONDITIONS",
           green: "GO",
           yellow: "CAUTION",
           red: "NO-GO"
         };
         var stamp = formatDecisionTime(new Date());
+        var now = new Date().toISOString();
         decisionPanel.setAttribute("data-decision", decision);
         decisionLabel.textContent = labels[decision];
         decisionDetail.textContent = decisionCopy(decision, source);
         decisionUpdated.textContent = "Updated " + stamp;
+        currentDecisionUpdatedAt = now;
 
         try {
           localStorage.setItem("helm-decision", JSON.stringify({
             decision: decision,
             detail: decisionDetail.textContent,
             updated: decisionUpdated.textContent,
+            updatedAt: now,
+            boatProfile: boatProfile.value,
             location: decisionLocation.value,
             currentLeg: currentLeg.value,
             wind: saveInputs ? decisionWind.value : "",
@@ -2682,7 +2893,7 @@
       }
 
       function currentManualDecision() {
-        return decisionPanel.getAttribute("data-decision") || "green";
+        return decisionPanel.getAttribute("data-decision") || "none";
       }
 
       function decisionName(value) {
@@ -2698,7 +2909,14 @@
           return "GO";
         }
 
-        return "Not enough data";
+        return "PENDING";
+      }
+
+      function setPendingDecision() {
+        decisionPanel.setAttribute("data-decision", "none");
+        decisionLabel.textContent = "PENDING — ENTER CONDITIONS";
+        decisionDetail.textContent = "Enter wind, waves, visibility, and marine conditions before deciding.";
+        decisionUpdated.textContent = "Decision not updated this session";
       }
 
       function legWarningForLocation(value) {
@@ -2781,6 +2999,77 @@
         return "Recommended re-check interval: enter conditions.";
       }
 
+      function bumpSuggestion(suggestion) {
+        if (suggestion === "green") {
+          return "yellow";
+        }
+
+        if (suggestion === "yellow") {
+          return "red";
+        }
+
+        return suggestion;
+      }
+
+      function numberFromText(value) {
+        var match = String(value || "").match(/\d+(?:\.\d+)?/);
+        return match ? parseFloat(match[0]) : null;
+      }
+
+      function updateMarineWarnings() {
+        var period = numberFromText(marineWavePeriod.value);
+        var waterTemp = numberFromText(marineWaterTemperature.value);
+
+        if (period !== null && period <= 4) {
+          wavePeriodWarning.textContent = "Short-period waves can be steep and uncomfortable.";
+          wavePeriodWarning.classList.add("visible");
+        } else {
+          wavePeriodWarning.textContent = "";
+          wavePeriodWarning.classList.remove("visible");
+        }
+
+        waterTempWarning.classList.remove("critical");
+
+        if (waterTemp !== null && waterTemp < 50) {
+          waterTempWarning.textContent = "NO-GO warning: water below 50°F. Immersion gear and cold-water plan required.";
+          waterTempWarning.classList.add("visible", "critical");
+        } else if (waterTemp !== null && waterTemp < 60) {
+          waterTempWarning.textContent = "CAUTION: water below 60°F. Cold-water exposure risk is significant.";
+          waterTempWarning.classList.add("visible");
+        } else {
+          waterTempWarning.textContent = "";
+          waterTempWarning.classList.remove("visible");
+        }
+      }
+
+      function decisionUpdatedAt() {
+        if (!currentDecisionUpdatedAt) {
+          return null;
+        }
+
+        var date = new Date(currentDecisionUpdatedAt);
+        return Number.isNaN(date.getTime()) ? null : date;
+      }
+
+      function updateStaleDecisionWarning() {
+        var date = decisionUpdatedAt();
+        var hasManualDecision = currentManualDecision() !== "none";
+        var stale = (date && (Date.now() - date.getTime()) > 60 * 60 * 1000) || (!date && hasManualDecision && decisionUpdated.textContent !== "Decision not updated this session");
+
+        staleDecisionWarning.textContent = stale ? "STALE — RECHECK CONDITIONS" : "";
+        staleDecisionWarning.classList.toggle("visible", Boolean(stale));
+      }
+
+      function updateManualConflictWarning(suggestion) {
+        var manual = currentManualDecision();
+        var hasConflict = manual !== "none" && suggestion !== "none" && manual !== suggestion;
+        var alertConflict = (activeNoaaAlertLevel === "red" && manual !== "none" && manual !== "red") || (activeNoaaAlertLevel === "yellow" && manual === "green");
+
+        manualConflictWarning.textContent = hasConflict || alertConflict ? "Manual decision differs from suggested conditions. Re-check before proceeding." : "";
+        manualConflictWarning.classList.toggle("visible", Boolean(hasConflict || alertConflict));
+        manualConflictWarning.classList.toggle("critical", Boolean(activeNoaaAlertLevel === "red" && manual === "green"));
+      }
+
       function updateDepartureGuidance() {
         var suggestion = suggestedDecision.getAttribute("data-suggestion") || "none";
 
@@ -2850,23 +3139,40 @@
       window.formatWindSpeedMPH = formatWindSpeedMPH;
       window.formatNOAAWindSpeedMPH = formatNOAAWindSpeedMPH;
 
-      function suggestedDecisionFromInputs(wind, waves, visibility) {
-        var hasAnyValue = wind !== null || waves !== null || visibility !== null;
-        var hasAllValues = wind !== null && waves !== null && visibility !== null;
+      var boatThresholds = {
+        "Small open boat": { goWind: 8, cautionWind: 15, goWaves: 1, cautionWaves: 2, goVisibility: 5, cautionVisibility: 3 },
+        "Typical cruiser 25-35 ft": { goWind: 10, cautionWind: 18, goWaves: 1, cautionWaves: 3, goVisibility: 5, cautionVisibility: 3 },
+        "Larger well-equipped cruiser": { goWind: 12, cautionWind: 20, goWaves: 2, cautionWaves: 4, goVisibility: 5, cautionVisibility: 3 }
+      };
+
+      function currentBoatThresholds() {
+        return boatThresholds[boatProfile.value] || boatThresholds["Typical cruiser 25-35 ft"];
+      }
+
+      function normalizeBoatProfile(profile) {
+        return boatThresholds[profile] ? profile : "Typical cruiser 25-35 ft";
+      }
+
+      function suggestedDecisionFromInputs(wind, waves, visibility, gusts) {
+        var hasWindValue = wind !== null || gusts !== null;
+        var hasAnyValue = hasWindValue || waves !== null || visibility !== null;
+        var hasAllValues = hasWindValue && waves !== null && visibility !== null;
+        var thresholds = currentBoatThresholds();
+        var effectiveWind = Math.max(wind || 0, gusts || 0);
 
         if (!hasAnyValue) {
           return "none";
         }
 
-        if ((wind !== null && wind > 20) || (waves !== null && waves > 3) || (visibility !== null && visibility < 2)) {
+        if ((effectiveWind && effectiveWind > thresholds.cautionWind) || (waves !== null && waves > thresholds.cautionWaves) || (visibility !== null && visibility < thresholds.cautionVisibility)) {
           return "red";
         }
 
-        if ((wind !== null && wind > 10) || (waves !== null && waves > 1) || (visibility !== null && visibility < 5)) {
+        if ((effectiveWind && effectiveWind > thresholds.goWind) || (waves !== null && waves > thresholds.goWaves) || (visibility !== null && visibility < thresholds.goVisibility)) {
           return "yellow";
         }
 
-        if (hasAllValues && wind <= 10 && waves <= 1 && visibility >= 5) {
+        if (hasAllValues && effectiveWind <= thresholds.goWind && waves <= thresholds.goWaves && visibility >= thresholds.goVisibility) {
           return "green";
         }
 
@@ -2875,9 +3181,11 @@
 
       function updateSuggestedDecision() {
         var wind = numberFromInput(decisionWind);
+        var gusts = numberFromInput(quickGusts);
         var waves = numberFromInput(decisionWaves);
         var visibility = numberFromInput(decisionVisibility);
-        var suggestion = suggestedDecisionFromInputs(wind, waves, visibility);
+        var suggestion = suggestedDecisionFromInputs(wind, waves, visibility, gusts);
+        var period = numberFromText(quickWavePeriod.value) || numberFromText(marineWavePeriod.value);
         var labels = {
           green: "GO",
           yellow: "CAUTION",
@@ -2885,23 +3193,49 @@
           none: "enter wind, waves, and visibility"
         };
 
+        updateMarineWarnings();
+
+        if (period !== null && period <= 4) {
+          suggestion = bumpSuggestion(suggestion);
+        }
+
+        if (conditionsTrend.value === "Worsening") {
+          suggestion = bumpSuggestion(suggestion);
+        }
+
+        if (activeNoaaAlertLevel === "red") {
+          suggestion = "red";
+        } else if (activeNoaaAlertLevel === "yellow" && (suggestion === "green" || suggestion === "none")) {
+          suggestion = "yellow";
+        }
+
         decisionWindMeaning.textContent = windMeaningFromMPH(wind);
         suggestedDecision.setAttribute("data-suggestion", suggestion);
-        suggestedDecisionLabel.textContent = "Suggested: " + labels[suggestion];
+
+        if (activeNoaaAlertLevel === "red") {
+          suggestedDecisionLabel.textContent = "Warning active — consider NO-GO";
+        } else if (activeNoaaAlertLevel === "yellow" && suggestion === "yellow") {
+          suggestedDecisionLabel.textContent = "Advisory active — consider CAUTION";
+        } else {
+          suggestedDecisionLabel.textContent = "Suggested: " + labels[suggestion];
+        }
 
         if (suggestion === "none") {
           suggestedDecisionNote.textContent = "Manual decision remains in control.";
+          updateManualConflictWarning(suggestion);
           updateDepartureGuidance();
           return;
         }
 
         if (currentManualDecision() !== suggestion) {
           suggestedDecisionNote.textContent = "Manual decision differs from suggestion.";
+          updateManualConflictWarning(suggestion);
           updateDepartureGuidance();
           return;
         }
 
         suggestedDecisionNote.textContent = "Manual decision matches suggestion.";
+        updateManualConflictWarning(suggestion);
         updateDepartureGuidance();
       }
 
@@ -2909,16 +3243,26 @@
         quickWind.value = decisionWind.value;
         quickWaves.value = decisionWaves.value;
         quickVisibility.value = decisionVisibility.value;
+        quickWavePeriod.value = marineWavePeriod.value ? String(numberFromText(marineWavePeriod.value) || "") : quickWavePeriod.value;
+        quickWaterTemp.value = marineWaterTemperature.value ? String(numberFromText(marineWaterTemperature.value) || "") : quickWaterTemp.value;
         storageSet("helm-field-quickWind", quickWind.value);
+        storageSet("helm-field-quickGusts", quickGusts.value);
         storageSet("helm-field-quickWaves", quickWaves.value);
+        storageSet("helm-field-quickWavePeriod", quickWavePeriod.value);
         storageSet("helm-field-quickVisibility", quickVisibility.value);
+        storageSet("helm-field-quickWaterTemp", quickWaterTemp.value);
       }
 
       function saveOperationalFields() {
+        storageSet("helm-field-boatProfile", boatProfile.value);
         storageSet("helm-field-currentLeg", currentLeg.value);
         storageSet("helm-field-quickWind", quickWind.value);
+        storageSet("helm-field-quickGusts", quickGusts.value);
         storageSet("helm-field-quickWaves", quickWaves.value);
+        storageSet("helm-field-quickWavePeriod", quickWavePeriod.value);
         storageSet("helm-field-quickVisibility", quickVisibility.value);
+        storageSet("helm-field-quickWaterTemp", quickWaterTemp.value);
+        storageSet("helm-field-conditionsTrend", conditionsTrend.value);
         storageSet("helm-field-decisionWind", decisionWind.value);
         storageSet("helm-field-decisionWaves", decisionWaves.value);
         storageSet("helm-field-decisionVisibility", decisionVisibility.value);
@@ -2928,13 +3272,18 @@
         decisionWind.value = quickWind.value;
         decisionWaves.value = quickWaves.value;
         decisionVisibility.value = quickVisibility.value;
+        marineWavePeriod.value = quickWavePeriod.value ? quickWavePeriod.value + " sec" : "";
+        marineWaterTemperature.value = quickWaterTemp.value ? quickWaterTemp.value + "°F" : "";
         saveOperationalFields();
         updateSuggestedDecision();
-        saveDecisionState();
 
         if (markChecked) {
           updateLastCheckedNow();
+          updateDecisionTimestampOnly();
         }
+
+        saveDecisionState();
+        updateStaleDecisionWarning();
       }
 
       function guidanceSummaryText() {
@@ -2948,9 +3297,14 @@
         return {
           time: formatDecisionTime(new Date()),
           currentLeg: currentLeg.value,
+          boatProfile: boatProfile.value,
           wind: quickWind.value,
+          gusts: quickGusts.value,
           waves: quickWaves.value,
+          wavePeriod: quickWavePeriod.value,
           visibility: quickVisibility.value,
+          waterTemp: quickWaterTemp.value,
+          trend: conditionsTrend.value,
           suggestedDecision: decisionName(suggestedDecision.getAttribute("data-suggestion") || "none"),
           manualDecision: decisionName(currentManualDecision()),
           guidanceSummary: guidanceSummaryText()
@@ -2958,10 +3312,11 @@
       }
 
       if (savedDecision) {
-        decisionPanel.setAttribute("data-decision", savedDecision.decision || "green");
-        decisionLabel.textContent = savedDecision.decision === "red" ? "NO-GO" : savedDecision.decision === "yellow" ? "CAUTION" : "GO";
+        decisionPanel.setAttribute("data-decision", savedDecision.decision || "none");
+        decisionLabel.textContent = savedDecision.decision === "red" ? "NO-GO" : savedDecision.decision === "yellow" ? "CAUTION" : savedDecision.decision === "green" ? "GO" : "PENDING — ENTER CONDITIONS";
         decisionDetail.textContent = savedDecision.detail || decisionDetail.textContent;
         decisionUpdated.textContent = savedDecision.updated || decisionUpdated.textContent;
+        boatProfile.value = normalizeBoatProfile(savedDecision.boatProfile || boatProfile.value);
         decisionLocation.value = savedDecision.location || "";
         currentLeg.value = savedDecision.currentLeg || currentLeg.value;
         decisionWind.value = savedDecision.wind || "";
@@ -2976,6 +3331,7 @@
         button.addEventListener("click", function () {
           setDecision(button.getAttribute("data-decision-choice"), "Manual selection", true);
           updateSuggestedDecision();
+          updateStaleDecisionWarning();
         });
       });
 
@@ -2988,7 +3344,19 @@
 
       [quickWind, quickWaves, quickVisibility].forEach(function (input) {
         input.addEventListener("input", function () {
-          syncDecisionFromQuick(true);
+          syncDecisionFromQuick(false);
+        });
+      });
+
+      [quickGusts, quickWavePeriod, quickWaterTemp].forEach(function (input) {
+        input.addEventListener("input", function () {
+          syncDecisionFromQuick(false);
+        });
+      });
+
+      [boatProfile, conditionsTrend].forEach(function (input) {
+        input.addEventListener("change", function () {
+          syncDecisionFromQuick(false);
         });
       });
 
@@ -2999,7 +3367,6 @@
 
       currentLeg.addEventListener("change", function () {
         updateDepartureGuidance();
-        updateLastCheckedNow();
         storageSet("helm-field-currentLeg", currentLeg.value);
         saveDecisionState();
       });
@@ -3024,31 +3391,51 @@
       });
 
       startFresh.addEventListener("click", function () {
-        [quickWind, quickWaves, quickVisibility, decisionWind, decisionWaves, decisionVisibility].forEach(function (field) {
+        [quickWind, quickGusts, quickWaves, quickWavePeriod, quickVisibility, quickWaterTemp, decisionWind, decisionWaves, decisionVisibility, decisionLocation, decisionWindDirection, decisionTemperature, currentLeg, weatherLocation, marineWaveHeight, marineWaveDirection, marineWavePeriod, marineWaterTemperature, marineWind, marineSource].forEach(function (field) {
           field.value = "";
         });
+        conditionsTrend.value = "Stable";
 
         [weatherNotes, marineNotes, decisionReason].forEach(function (field) {
           field.value = "";
         });
 
-        decisionUpdated.textContent = "Decision not updated this session";
+        currentDecisionUpdatedAt = null;
+        setPendingDecision();
         lastChecked.textContent = "Not checked this session";
         suggestedDecision.setAttribute("data-suggestion", "none");
         suggestedDecisionLabel.textContent = "Suggested: enter wind, waves, and visibility";
         suggestedDecisionNote.textContent = "Manual decision remains in control.";
         updateSuggestedDecision();
+        updateLegRiskWarning();
         updateDepartureGuidance();
+        updateStaleDecisionWarning();
 
         [
           "helm-last-checked",
+          "helm-decision",
+          "helm-field-currentLeg",
           "helm-field-quickWind",
+          "helm-field-quickGusts",
           "helm-field-quickWaves",
+          "helm-field-quickWavePeriod",
           "helm-field-quickVisibility",
+          "helm-field-quickWaterTemp",
+          "helm-field-conditionsTrend",
+          "helm-field-decisionLocation",
           "helm-field-decisionWind",
+          "helm-field-decisionWindDirection",
+          "helm-field-decisionTemperature",
           "helm-field-decisionWaves",
           "helm-field-decisionVisibility",
+          "helm-field-weatherLocation",
           "helm-field-weatherNotes",
+          "helm-field-marineWaveHeight",
+          "helm-field-marineWaveDirection",
+          "helm-field-marineWavePeriod",
+          "helm-field-marineWaterTemperature",
+          "helm-field-marineWind",
+          "helm-field-marineSource",
           "helm-field-marineNotes",
           "helm-field-decisionReason"
         ].forEach(function (key) {
@@ -3067,16 +3454,28 @@
       });
 
       decisionReason.addEventListener("input", function () {
-        var currentDecision = decisionPanel.getAttribute("data-decision") || "green";
-        setDecision(currentDecision, "Reason updated", true);
+        storageSet("helm-field-decisionReason", decisionReason.value);
+        saveDecisionState();
       });
 
-      var weatherLocation = document.getElementById("weatherLocation");
       var weatherNotes = document.getElementById("weatherNotes");
       var refreshNoaaWeather = document.getElementById("refreshNoaaWeather");
       var noaaStatus = document.getElementById("noaaStatus");
+      var weatherLocation = document.getElementById("weatherLocation");
       var marineSource = document.getElementById("marineSource");
       var marineNotes = document.getElementById("marineNotes");
+      var marineWaveHeight = document.getElementById("marineWaveHeight");
+      var marineWaveDirection = document.getElementById("marineWaveDirection");
+      var marineWavePeriod = document.getElementById("marineWavePeriod");
+      var marineWaterTemperature = document.getElementById("marineWaterTemperature");
+      var marineWind = document.getElementById("marineWind");
+
+      [marineWavePeriod, marineWaterTemperature].forEach(function (input) {
+        input.addEventListener("input", function () {
+          updateSuggestedDecision();
+          updateDepartureGuidance();
+        });
+      });
 
       var noaaStops = [
         { id: "boyne", name: "Boyne City / Harborage", lat: 45.21, lon: -85.02 },
@@ -3087,9 +3486,145 @@
         { id: "bay-city", name: "Bay City", lat: 43.68, lon: -83.825 }
       ];
       var noaaByStop = {};
+      var noaaAlertConfig = {
+        routeTerms: ["michigan", "great lakes", "lake huron", "lake michigan", "saginaw", "bay city", "petoskey", "mackinac", "harrisville", "east tawas", "tawas", "little traverse", "straits"],
+        zoneTerms: ["LHZ", "LMZ", "MIZ"],
+        warningEvents: ["Gale Warning", "Storm Warning", "Special Marine Warning", "Thunderstorm Warning", "Severe Thunderstorm Warning"],
+        advisoryEvents: ["Small Craft Advisory", "Marine Weather Statement", "Dense Fog Advisory"]
+      };
 
       function setNoaaStatus(message) {
         noaaStatus.textContent = message;
+      }
+
+      function setAlertsBanner(level, message) {
+        alertsBanner.setAttribute("data-alert-level", level || "none");
+        alertsText.textContent = message;
+      }
+
+      function alertEventName(alert) {
+        return alert && alert.properties && alert.properties.event ? alert.properties.event : "";
+      }
+
+      function alertHeadline(alert) {
+        return alert && alert.properties && alert.properties.headline ? alert.properties.headline : alertEventName(alert);
+      }
+
+      function alertDescription(alert) {
+        var properties = alert && alert.properties ? alert.properties : {};
+        return properties.description || properties.instruction || properties.headline || alertEventName(alert);
+      }
+
+      function alertUpdatedTime(alert) {
+        var properties = alert && alert.properties ? alert.properties : {};
+        var value = properties.updated || properties.sent || properties.effective;
+        var date = value ? new Date(value) : null;
+
+        if (!date || Number.isNaN(date.getTime())) {
+          return "updated time unavailable";
+        }
+
+        return formatNoaaTime(date.toISOString());
+      }
+
+      function eventMatches(eventName, patterns) {
+        var text = String(eventName || "").toLowerCase();
+
+        return patterns.some(function (pattern) {
+          return text.indexOf(pattern.toLowerCase()) !== -1;
+        });
+      }
+
+      function alertSearchText(alert) {
+        var properties = alert && alert.properties ? alert.properties : {};
+        var zones = Array.isArray(properties.affectedZones) ? properties.affectedZones.join(" ") : "";
+
+        return [
+          properties.areaDesc,
+          properties.headline,
+          properties.description,
+          properties.instruction,
+          zones
+        ].join(" ").toLowerCase();
+      }
+
+      function routeRelevantAlert(alert) {
+        var eventName = alertEventName(alert);
+        var isWatchedEvent = eventMatches(eventName, noaaAlertConfig.warningEvents.concat(noaaAlertConfig.advisoryEvents));
+        var text = alertSearchText(alert);
+        var routeMatch = noaaAlertConfig.routeTerms.some(function (term) {
+          return text.indexOf(term) !== -1;
+        });
+        var zoneMatch = noaaAlertConfig.zoneTerms.some(function (term) {
+          return text.indexOf(term.toLowerCase()) !== -1;
+        });
+
+        return isWatchedEvent && (routeMatch || zoneMatch);
+      }
+
+      function shortAlertSummary(alert) {
+        var text = alertDescription(alert).replace(/\s+/g, " ").trim();
+
+        if (text.length > 150) {
+          return text.slice(0, 147) + "...";
+        }
+
+        return text || alertHeadline(alert);
+      }
+
+      function summarizeAlerts(alerts) {
+        var relevantAlerts = alerts.filter(routeRelevantAlert);
+
+        if (!relevantAlerts.length) {
+          activeNoaaAlertLevel = "none";
+          activeNoaaAlertMessage = "";
+          setAlertsBanner("none", "No active marine alerts");
+          updateSuggestedDecision();
+          return;
+        }
+
+        var warningAlerts = relevantAlerts.filter(function (alert) {
+          return eventMatches(alertEventName(alert), noaaAlertConfig.warningEvents);
+        });
+        var advisoryAlerts = relevantAlerts.filter(function (alert) {
+          return eventMatches(alertEventName(alert), noaaAlertConfig.advisoryEvents);
+        });
+        var alert = warningAlerts[0] || advisoryAlerts[0] || relevantAlerts[0];
+        var eventName = alertEventName(alert);
+        var summary = eventName + ": " + shortAlertSummary(alert) + " Last updated: " + alertUpdatedTime(alert) + ".";
+
+        if (warningAlerts.length) {
+          activeNoaaAlertLevel = "red";
+          activeNoaaAlertMessage = eventName;
+          setAlertsBanner("red", summary);
+          updateSuggestedDecision();
+          return;
+        }
+
+        activeNoaaAlertLevel = "yellow";
+        activeNoaaAlertMessage = eventName;
+        setAlertsBanner("yellow", summary);
+        updateSuggestedDecision();
+      }
+
+      function refreshAlerts() {
+        refreshNoaaAlerts.disabled = true;
+        setAlertsBanner("none", "Checking active NOAA alerts...");
+
+        fetchJson("https://api.weather.gov/alerts/active")
+          .then(function (data) {
+            var alerts = data && Array.isArray(data.features) ? data.features : [];
+            refreshNoaaAlerts.disabled = false;
+            summarizeAlerts(alerts);
+          })
+          .catch(function (error) {
+            refreshNoaaAlerts.disabled = false;
+            activeNoaaAlertLevel = "yellow";
+            activeNoaaAlertMessage = "Alerts unavailable";
+            setAlertsBanner("yellow", "Alerts unavailable — verify NOAA marine forecast");
+            updateSuggestedDecision();
+            console.warn("NOAA alerts failed", error);
+          });
       }
 
       function setWeatherField(stopId, field, value, loaded) {
@@ -3215,7 +3750,15 @@
         setWeatherField(stop.id, "windDirection", windDirection, true);
         setWeatherField(stop.id, "shortForecast", shortForecast, true);
         setWeatherField(stop.id, "updated", formatNoaaTime(updated), true);
-        setWeatherField(stop.id, "status", "Loaded from api.weather.gov", true);
+
+        var updatedDate = updated ? new Date(updated) : null;
+        var staleNoaa = updatedDate && !Number.isNaN(updatedDate.getTime()) && (Date.now() - updatedDate.getTime()) > 2 * 60 * 60 * 1000;
+
+        if (card) {
+          card.classList.toggle("stale", Boolean(staleNoaa));
+        }
+
+        setWeatherField(stop.id, "status", staleNoaa ? "STALE NOAA data - recheck source." : "Loaded from api.weather.gov", true);
 
         if (routeWind) {
           routeWind.textContent = "Wind (MPH): " + wind;
@@ -3247,9 +3790,10 @@
       function saveDecisionState() {
         try {
           localStorage.setItem("helm-decision", JSON.stringify({
-            decision: decisionPanel.getAttribute("data-decision") || "green",
+            decision: decisionPanel.getAttribute("data-decision") || "none",
             detail: decisionDetail.textContent,
             updated: decisionUpdated.textContent,
+            updatedAt: currentDecisionUpdatedAt,
             location: decisionLocation.value,
             currentLeg: currentLeg.value,
             wind: decisionWind.value,
@@ -3323,8 +3867,10 @@
         updateLastCheckedFromNoaa();
         updateSuggestedDecision();
         updateLegRiskWarning();
+        currentDecisionUpdatedAt = new Date().toISOString();
         decisionUpdated.textContent = "NOAA updated " + record.updated;
         saveDecisionState();
+        updateStaleDecisionWarning();
 
         if (confirmation) {
           confirmation.textContent = "NOAA data copied to decision fields";
@@ -3413,6 +3959,7 @@
       }
 
       refreshNoaaWeather.addEventListener("click", refreshNoaa);
+      refreshNoaaAlerts.addEventListener("click", refreshAlerts);
 
       document.querySelectorAll("[data-use-noaa]").forEach(function (button) {
         button.addEventListener("click", function () {
@@ -3447,7 +3994,7 @@
           var savedValue = storageGet(key);
 
           if (savedValue !== null && field.id !== "emergencyContactNumber") {
-            field.value = savedValue;
+            field.value = field.id === "boatProfile" ? normalizeBoatProfile(savedValue) : savedValue;
           }
 
           field.addEventListener("input", function () {
@@ -3479,7 +4026,10 @@
       updateSuggestedDecision();
       updateLegRiskWarning();
       updateDepartureGuidance();
+      updateStaleDecisionWarning();
       renderSnapshots();
+      refreshAlerts();
+      window.setInterval(updateStaleDecisionWarning, 60000);
 
       resetDashboard.addEventListener("click", function () {
         var confirmed = window.confirm("Reset saved dashboard fields, decision, contact, and checklist?");
@@ -3509,18 +4059,21 @@
         });
 
         setTheme("light");
+        boatProfile.value = "Typical cruiser 25-35 ft";
+        conditionsTrend.value = "Stable";
         document.querySelectorAll("details.collapsible-section").forEach(function (details) {
           details.open = false;
         });
         lastChecked.textContent = "Not checked this session";
         updateEmergencyContact("");
-        decisionPanel.setAttribute("data-decision", "green");
-        decisionLabel.textContent = "GO";
-        decisionDetail.textContent = "Safe range entered or manual GO selected.";
+        currentDecisionUpdatedAt = null;
+        setPendingDecision();
         decisionUpdated.textContent = "Decision not updated this session";
         updateSuggestedDecision();
         updateLegRiskWarning();
         updateDepartureGuidance();
+        updateStaleDecisionWarning();
+        setAlertsBanner("none", "NOAA alerts not checked yet.");
       });
     })();
   </script>
