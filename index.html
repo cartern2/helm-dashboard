@@ -1995,7 +1995,7 @@
           <span id="suggestedDecisionNote">Manual decision remains in control.</span>
         </div>
 
-        <div class="captain-responsibility">This is a decision aid only. You are the captain. Verify NOAA marine forecast, buoy data, visual conditions, fuel, daylight, crew, and vessel readiness.</div>
+        <div class="captain-responsibility">Decision aid only. You are the captain. Verify NOAA marine forecast, buoy data, visual conditions, fuel, daylight, crew, and vessel readiness.</div>
 
         <article class="alerts-banner" id="alertsBanner" data-alert-level="none" aria-labelledby="alerts-title">
           <h3 id="alerts-title">NOAA Alerts</h3>
@@ -3062,12 +3062,14 @@
 
       function updateManualConflictWarning(suggestion) {
         var manual = currentManualDecision();
-        var hasConflict = manual !== "none" && suggestion !== "none" && manual !== suggestion;
+        var rank = { none: 0, red: 1, yellow: 2, green: 3 };
+        var isMoreOptimistic = manual !== "none" && suggestion !== "none" && rank[manual] > rank[suggestion];
         var alertConflict = (activeNoaaAlertLevel === "red" && manual !== "none" && manual !== "red") || (activeNoaaAlertLevel === "yellow" && manual === "green");
+        var visible = isMoreOptimistic || alertConflict;
 
-        manualConflictWarning.textContent = hasConflict || alertConflict ? "Manual decision differs from suggested conditions. Re-check before proceeding." : "";
-        manualConflictWarning.classList.toggle("visible", Boolean(hasConflict || alertConflict));
-        manualConflictWarning.classList.toggle("critical", Boolean(activeNoaaAlertLevel === "red" && manual === "green"));
+        manualConflictWarning.textContent = visible ? "Manual decision is more optimistic than current conditions suggest. Re-check before proceeding." : "";
+        manualConflictWarning.classList.toggle("visible", visible);
+        manualConflictWarning.classList.toggle("critical", Boolean(visible && ((activeNoaaAlertLevel === "red" && manual !== "none" && manual !== "red") || manual === "green")));
       }
 
       function updateDepartureGuidance() {
@@ -3214,8 +3216,16 @@
 
         if (activeNoaaAlertLevel === "red") {
           suggestedDecisionLabel.textContent = "Warning active — consider NO-GO";
-        } else if (activeNoaaAlertLevel === "yellow" && suggestion === "yellow") {
-          suggestedDecisionLabel.textContent = "Advisory active — consider CAUTION";
+          suggestedDecisionNote.textContent = "Active alert present — verify marine forecast before departure.";
+          updateManualConflictWarning(suggestion);
+          updateDepartureGuidance();
+          return;
+        } else if (activeNoaaAlertLevel === "yellow") {
+          suggestedDecisionLabel.textContent = suggestion === "red" ? "Suggested: NO-GO" : "Advisory active — consider CAUTION";
+          suggestedDecisionNote.textContent = "Active alert present — verify marine forecast before departure.";
+          updateManualConflictWarning(suggestion);
+          updateDepartureGuidance();
+          return;
         } else {
           suggestedDecisionLabel.textContent = "Suggested: " + labels[suggestion];
         }
