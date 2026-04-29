@@ -2653,6 +2653,21 @@
       var activeNoaaAlertMessage = "";
       var snapshots = [];
       var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const state = {
+        wind: null,
+        gusts: null,
+        waves: null,
+        wavePeriod: null,
+        visibility: null,
+        waterTemp: null,
+        trend: "Stable",
+        currentLeg: "",
+        boatProfile: "Typical cruiser 25-35 ft",
+        alerts: [],
+        lastUpdated: null
+      };
+
+      window.state = state;
 
       try {
         savedTheme = localStorage.getItem("helm-theme");
@@ -3072,11 +3087,12 @@
         manualConflictWarning.classList.toggle("critical", Boolean(visible && ((activeNoaaAlertLevel === "red" && manual !== "none" && manual !== "red") || manual === "green")));
       }
 
-      function updateDepartureGuidance() {
-        var suggestion = suggestedDecision.getAttribute("data-suggestion") || "none";
+      function updateDepartureGuidance(computed) {
+        var result = computed || computeSuggestion(state);
+        var suggestion = result.suggestion || suggestedDecision.getAttribute("data-suggestion") || "none";
 
         departureGuidance.setAttribute("data-guidance", suggestion);
-        departureGuidanceText.textContent = guidanceTextForSuggestion(suggestion);
+        departureGuidanceText.textContent = computeGuidance(state, result);
         departureLegWarning.textContent = legWarningForGuidance();
         departureRecheck.textContent = recheckIntervalForSuggestion(suggestion);
       }
@@ -3147,84 +3163,153 @@
         "Larger well-equipped cruiser": { goWind: 12, cautionWind: 20, goWaves: 2, cautionWaves: 4, goVisibility: 5, cautionVisibility: 3 }
       };
 
-      function currentBoatThresholds() {
-        return boatThresholds[boatProfile.value] || boatThresholds["Typical cruiser 25-35 ft"];
+      function currentBoatThresholds(profile) {
+        return boatThresholds[profile || state.boatProfile] || boatThresholds["Typical cruiser 25-35 ft"];
       }
 
       function normalizeBoatProfile(profile) {
         return boatThresholds[profile] ? profile : "Typical cruiser 25-35 ft";
       }
 
-      function suggestedDecisionFromInputs(wind, waves, visibility, gusts) {
-        var hasWindValue = wind !== null || gusts !== null;
-        var hasAnyValue = hasWindValue || waves !== null || visibility !== null;
-        var hasAllValues = hasWindValue && waves !== null && visibility !== null;
-        var thresholds = currentBoatThresholds();
-        var effectiveWind = Math.max(wind || 0, gusts || 0);
+      function numberFromValue(value) {
+        var number = parseFloat(value);
+        return Number.isFinite(number) ? number : null;
+      }
 
-        if (!hasAnyValue) {
-          return "none";
-        }
+      function highestAlertLevel(alerts) {
+        var list = Array.isArray(alerts) ? alerts : [];
 
-        if ((effectiveWind && effectiveWind > thresholds.cautionWind) || (waves !== null && waves > thresholds.cautionWaves) || (visibility !== null && visibility < thresholds.cautionVisibility)) {
+        if (list.some(function (alert) {
+          return alert && alert.level === "red";
+        })) {
           return "red";
         }
 
-        if ((effectiveWind && effectiveWind > thresholds.goWind) || (waves !== null && waves > thresholds.goWaves) || (visibility !== null && visibility < thresholds.goVisibility)) {
+        if (list.length || list.some(function (alert) {
+          return alert && alert.level === "yellow";
+        })) {
           return "yellow";
-        }
-
-        if (hasAllValues && effectiveWind <= thresholds.goWind && waves <= thresholds.goWaves && visibility >= thresholds.goVisibility) {
-          return "green";
         }
 
         return "none";
       }
 
-      function updateSuggestedDecision() {
-        var wind = numberFromInput(decisionWind);
-        var gusts = numberFromInput(quickGusts);
-        var waves = numberFromInput(decisionWaves);
-        var visibility = numberFromInput(decisionVisibility);
-        var suggestion = suggestedDecisionFromInputs(wind, waves, visibility, gusts);
-        var period = numberFromText(quickWavePeriod.value) || numberFromText(marineWavePeriod.value);
+      function computeSuggestion(s) {
+        var wind = s.wind;
+        if (s.gusts !== null && (wind === null || s.gusts > wind)) {
+          wind = s.gusts;
+        }
+        var thresholds = currentBoatThresholds(s.boatProfile);
+        var suggestion = "none";
+        var reasons = [];
+
+        if (wind !== null && s.waves !== null && s.visibility !== null) {
+          if (wind > thresholds.cautionWind || s.waves > thresholds.cautionWaves || s.visibility < thresholds.cautionVisibility) {
+            suggestion = "red";
+          } else if (wind > thresholds.goWind || s.waves > thresholds.goWaves || s.visibility < thresholds.goVisibility) {
+            suggestion = "yellow";
+          } else {
+            suggestion = "green";
+          }
+        }
+
+        if (s.wavePeriod !== null && s.wavePeriod <= 4) {
+          suggestion = bumpSuggestion(suggestion);
+          reasons.push("Short-period waves");
+        }
+
+        if (s.waterTemp !== null && s.waterTemp < 50) {
+          reasons.push("Cold water risk");
+        } else if (s.waterTemp !== null && s.waterTemp < 60) {
+          reasons.push("Cold water caution");
+        }
+
+        if (s.trend === "Worsening") {
+          suggestion = bumpSuggestion(suggestion);
+          reasons.push("Conditions worsening");
+        }
+
+        var alertLevel = highestAlertLevel(s.alerts);
+
+        if (alertLevel === "red") {
+          suggestion = "red";
+          reasons.push("Active NOAA alerts");
+        } else if (alertLevel === "yellow") {
+          if (suggestion === "green" || suggestion === "none") {
+            suggestion = "yellow";
+          }
+          reasons.push("Active NOAA alerts");
+        }
+
+        return {
+          suggestion: suggestion,
+          reasons: reasons
+        };
+      }
+
+      function computeGuidance(s, computed) {
+        return guidanceTextForSuggestion(computed.suggestion);
+      }
+
+      function computeWarnings(s, computed) {
+        var warnings = [];
+
+        if (s.wind === null || s.waves === null || s.visibility === null) {
+          warnings.push("Incomplete conditions");
+        }
+
+        if (s.waterTemp !== null && s.waterTemp < 50) {
+          warnings.push("Cold water immersion risk");
+        }
+
+        if (s.wavePeriod !== null && s.wavePeriod <= 4) {
+          warnings.push("Short, steep waves possible");
+        }
+
+        return warnings;
+      }
+
+      function readStateFromInputs() {
+        var quickPeriod = numberFromValue(quickWavePeriod.value);
+        var quickWaterTempValue = numberFromValue(quickWaterTemp.value);
+
+        state.wind = numberFromInput(decisionWind);
+        state.gusts = numberFromInput(quickGusts);
+        state.waves = numberFromInput(decisionWaves);
+        state.wavePeriod = quickPeriod !== null ? quickPeriod : numberFromText(marineWavePeriod.value);
+        state.visibility = numberFromInput(decisionVisibility);
+        state.waterTemp = quickWaterTempValue !== null ? quickWaterTempValue : numberFromText(marineWaterTemperature.value);
+        state.trend = conditionsTrend.value || "Stable";
+        state.currentLeg = currentLeg.value || "";
+        state.boatProfile = normalizeBoatProfile(boatProfile.value);
+      }
+
+      function render(s, computed) {
+        var suggestion = computed.suggestion;
         var labels = {
           green: "GO",
           yellow: "CAUTION",
           red: "NO-GO",
           none: "enter wind, waves, and visibility"
         };
+        var alertLevel = highestAlertLevel(s.alerts);
 
         updateMarineWarnings();
 
-        if (period !== null && period <= 4) {
-          suggestion = bumpSuggestion(suggestion);
-        }
-
-        if (conditionsTrend.value === "Worsening") {
-          suggestion = bumpSuggestion(suggestion);
-        }
-
-        if (activeNoaaAlertLevel === "red") {
-          suggestion = "red";
-        } else if (activeNoaaAlertLevel === "yellow" && (suggestion === "green" || suggestion === "none")) {
-          suggestion = "yellow";
-        }
-
-        decisionWindMeaning.textContent = windMeaningFromMPH(wind);
+        decisionWindMeaning.textContent = windMeaningFromMPH(s.wind);
         suggestedDecision.setAttribute("data-suggestion", suggestion);
 
-        if (activeNoaaAlertLevel === "red") {
+        if (alertLevel === "red") {
           suggestedDecisionLabel.textContent = "Warning active — consider NO-GO";
           suggestedDecisionNote.textContent = "Active alert present — verify marine forecast before departure.";
           updateManualConflictWarning(suggestion);
-          updateDepartureGuidance();
+          updateDepartureGuidance(computed);
           return;
-        } else if (activeNoaaAlertLevel === "yellow") {
+        } else if (alertLevel === "yellow") {
           suggestedDecisionLabel.textContent = suggestion === "red" ? "Suggested: NO-GO" : "Advisory active — consider CAUTION";
           suggestedDecisionNote.textContent = "Active alert present — verify marine forecast before departure.";
           updateManualConflictWarning(suggestion);
-          updateDepartureGuidance();
+          updateDepartureGuidance(computed);
           return;
         } else {
           suggestedDecisionLabel.textContent = "Suggested: " + labels[suggestion];
@@ -3233,21 +3318,45 @@
         if (suggestion === "none") {
           suggestedDecisionNote.textContent = "Manual decision remains in control.";
           updateManualConflictWarning(suggestion);
-          updateDepartureGuidance();
+          updateDepartureGuidance(computed);
           return;
         }
 
         if (currentManualDecision() !== suggestion) {
           suggestedDecisionNote.textContent = "Manual decision differs from suggestion.";
           updateManualConflictWarning(suggestion);
-          updateDepartureGuidance();
+          updateDepartureGuidance(computed);
           return;
         }
 
         suggestedDecisionNote.textContent = "Manual decision matches suggestion.";
         updateManualConflictWarning(suggestion);
-        updateDepartureGuidance();
+        updateDepartureGuidance(computed);
       }
+
+      function runEngine() {
+        var computed = computeSuggestion(state);
+        render(state, computed);
+        return computed;
+      }
+
+      function updateState(partial) {
+        Object.assign(state, partial);
+        state.boatProfile = normalizeBoatProfile(state.boatProfile);
+        state.lastUpdated = Date.now();
+        return runEngine();
+      }
+
+      function updateSuggestedDecision() {
+        readStateFromInputs();
+        return updateState({});
+      }
+
+      window.updateState = updateState;
+      window.runEngine = runEngine;
+      window.computeSuggestion = computeSuggestion;
+      window.computeGuidance = computeGuidance;
+      window.computeWarnings = computeWarnings;
 
       function syncQuickFromDecision() {
         quickWind.value = decisionWind.value;
@@ -3285,7 +3394,17 @@
         marineWavePeriod.value = quickWavePeriod.value ? quickWavePeriod.value + " sec" : "";
         marineWaterTemperature.value = quickWaterTemp.value ? quickWaterTemp.value + "°F" : "";
         saveOperationalFields();
-        updateSuggestedDecision();
+        updateState({
+          wind: numberFromValue(quickWind.value),
+          gusts: numberFromValue(quickGusts.value),
+          waves: numberFromValue(quickWaves.value),
+          wavePeriod: numberFromValue(quickWavePeriod.value),
+          visibility: numberFromValue(quickVisibility.value),
+          waterTemp: numberFromValue(quickWaterTemp.value),
+          trend: conditionsTrend.value || "Stable",
+          currentLeg: currentLeg.value || "",
+          boatProfile: boatProfile.value
+        });
 
         if (markChecked) {
           updateLastCheckedNow();
@@ -3304,21 +3423,22 @@
         syncDecisionFromQuick(true);
         saveDecisionState();
 
-        return {
+        return Object.assign({}, state, {
+          timestamp: Date.now(),
           time: formatDecisionTime(new Date()),
-          currentLeg: currentLeg.value,
-          boatProfile: boatProfile.value,
-          wind: quickWind.value,
-          gusts: quickGusts.value,
-          waves: quickWaves.value,
-          wavePeriod: quickWavePeriod.value,
-          visibility: quickVisibility.value,
-          waterTemp: quickWaterTemp.value,
-          trend: conditionsTrend.value,
+          currentLeg: state.currentLeg,
+          boatProfile: state.boatProfile,
+          wind: state.wind,
+          gusts: state.gusts,
+          waves: state.waves,
+          wavePeriod: state.wavePeriod,
+          visibility: state.visibility,
+          waterTemp: state.waterTemp,
+          trend: state.trend,
           suggestedDecision: decisionName(suggestedDecision.getAttribute("data-suggestion") || "none"),
           manualDecision: decisionName(currentManualDecision()),
           guidanceSummary: guidanceSummaryText()
-        };
+        });
       }
 
       if (savedDecision) {
@@ -3376,7 +3496,7 @@
       });
 
       currentLeg.addEventListener("change", function () {
-        updateDepartureGuidance();
+        updateState({ currentLeg: currentLeg.value || "" });
         storageSet("helm-field-currentLeg", currentLeg.value);
         saveDecisionState();
       });
@@ -3588,8 +3708,9 @@
         if (!relevantAlerts.length) {
           activeNoaaAlertLevel = "none";
           activeNoaaAlertMessage = "";
+          state.alerts = [];
           setAlertsBanner("none", "No active marine alerts");
-          updateSuggestedDecision();
+          updateState({ alerts: [] });
           return;
         }
 
@@ -3607,14 +3728,28 @@
           activeNoaaAlertLevel = "red";
           activeNoaaAlertMessage = eventName;
           setAlertsBanner("red", summary);
-          updateSuggestedDecision();
+          updateState({
+            alerts: relevantAlerts.map(function (item) {
+              return {
+                level: eventMatches(alertEventName(item), noaaAlertConfig.warningEvents) ? "red" : "yellow",
+                event: alertEventName(item)
+              };
+            })
+          });
           return;
         }
 
         activeNoaaAlertLevel = "yellow";
         activeNoaaAlertMessage = eventName;
         setAlertsBanner("yellow", summary);
-        updateSuggestedDecision();
+        updateState({
+          alerts: relevantAlerts.map(function (item) {
+            return {
+              level: "yellow",
+              event: alertEventName(item)
+            };
+          })
+        });
       }
 
       function refreshAlerts() {
@@ -3632,7 +3767,7 @@
             activeNoaaAlertLevel = "yellow";
             activeNoaaAlertMessage = "Alerts unavailable";
             setAlertsBanner("yellow", "Alerts unavailable — verify NOAA marine forecast");
-            updateSuggestedDecision();
+            updateState({ alerts: [{ level: "yellow", event: "Alerts unavailable" }] });
             console.warn("NOAA alerts failed", error);
           });
       }
@@ -3804,13 +3939,18 @@
             detail: decisionDetail.textContent,
             updated: decisionUpdated.textContent,
             updatedAt: currentDecisionUpdatedAt,
+            boatProfile: state.boatProfile,
             location: decisionLocation.value,
-            currentLeg: currentLeg.value,
-            wind: decisionWind.value,
+            currentLeg: state.currentLeg,
+            wind: state.wind !== null ? String(state.wind) : decisionWind.value,
+            gusts: state.gusts,
             windDirection: decisionWindDirection.value,
             temperature: decisionTemperature.value,
-            waves: decisionWaves.value,
-            visibility: decisionVisibility.value,
+            waves: state.waves !== null ? String(state.waves) : decisionWaves.value,
+            wavePeriod: state.wavePeriod,
+            visibility: state.visibility !== null ? String(state.visibility) : decisionVisibility.value,
+            waterTemp: state.waterTemp,
+            trend: state.trend,
             reason: decisionReason.value
           }));
         } catch (error) {
@@ -3857,6 +3997,13 @@
         }
 
         syncQuickFromDecision();
+        updateState({
+          wind: numberFromValue(decisionWind.value),
+          waves: numberFromValue(decisionWaves.value),
+          visibility: numberFromValue(decisionVisibility.value),
+          currentLeg: currentLeg.value || "",
+          boatProfile: boatProfile.value
+        });
 
         weatherNotes.value = [
           "NOAA " + record.period + ": " + record.shortForecast,
@@ -3875,7 +4022,6 @@
         saveManualWeatherFields();
         saveDecisionFields();
         updateLastCheckedFromNoaa();
-        updateSuggestedDecision();
         updateLegRiskWarning();
         currentDecisionUpdatedAt = new Date().toISOString();
         decisionUpdated.textContent = "NOAA updated " + record.updated;
