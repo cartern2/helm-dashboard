@@ -821,6 +821,63 @@
       background: #fff;
     }
 
+    .debug-toggle {
+      justify-self: start;
+      min-height: 40px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+
+    .debug-panel {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 2px dashed #60727b;
+      border-radius: 8px;
+      background: #f6fafb;
+      color: #17272f;
+    }
+
+    .debug-panel[hidden] {
+      display: none;
+    }
+
+    .debug-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .debug-box {
+      display: grid;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .debug-box b {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .debug-box pre {
+      overflow: auto;
+      max-height: 220px;
+      margin: 0;
+      padding: 10px;
+      border-radius: 6px;
+      background: #0f1f26;
+      color: #e8f5f8;
+      font-size: 0.78rem;
+      line-height: 1.35;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
     .captain-responsibility {
       margin: 10px 14px 0;
       padding: 12px;
@@ -1545,6 +1602,10 @@
         grid-template-columns: 1fr;
       }
 
+      .debug-grid {
+        grid-template-columns: 1fr;
+      }
+
       .action-grid,
       .marina-actions,
       .buoy-toolbar {
@@ -1711,6 +1772,17 @@
     html[data-theme="dark"] .captain-responsibility {
       background: #0b202b;
       color: var(--ink);
+    }
+
+    html[data-theme="dark"] .debug-toggle {
+      background: #17272f;
+      color: #d9e9ee;
+    }
+
+    html[data-theme="dark"] .debug-panel {
+      border-color: #6f8e9a;
+      background: #101c22;
+      color: #f4fbfd;
     }
 
     html[data-theme="dark"] .alerts-banner[data-alert-level="yellow"] {
@@ -1940,6 +2012,31 @@
         </div>
 
         <p class="small-note">Short wave periods can make waves steeper. Water below 60 F increases cold-water risk; below 50 F requires strong immersion-gear planning.</p>
+        <button class="debug-toggle" id="debugToggle" type="button" aria-expanded="false" aria-controls="debugPanel">Debug</button>
+        <div class="debug-panel" id="debugPanel" hidden>
+          <div class="debug-grid">
+            <div class="debug-box">
+              <b>Current State</b>
+              <pre id="debugStateJson">{}</pre>
+            </div>
+            <div class="debug-box">
+              <b>Computed Suggestion</b>
+              <pre id="debugComputedJson">{}</pre>
+            </div>
+            <div class="debug-box">
+              <b>Active Warnings</b>
+              <pre id="debugWarnings">[]</pre>
+            </div>
+            <div class="debug-box">
+              <b>Last Action</b>
+              <pre id="debugLastAction">Loaded</pre>
+            </div>
+            <div class="debug-box">
+              <b>Last Update Time</b>
+              <pre id="debugLastUpdate">Never</pre>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="snapshots-panel" aria-labelledby="snapshots-title">
@@ -2635,6 +2732,13 @@
       var clearSnapshots = document.getElementById("clearSnapshots");
       var snapshotsList = document.getElementById("snapshotsList");
       var startFresh = document.getElementById("startFresh");
+      var debugToggle = document.getElementById("debugToggle");
+      var debugPanel = document.getElementById("debugPanel");
+      var debugStateJson = document.getElementById("debugStateJson");
+      var debugComputedJson = document.getElementById("debugComputedJson");
+      var debugWarnings = document.getElementById("debugWarnings");
+      var debugLastAction = document.getElementById("debugLastAction");
+      var debugLastUpdate = document.getElementById("debugLastUpdate");
       var decisionWind = document.getElementById("decisionWind");
       var decisionWindMeaning = document.getElementById("decisionWindMeaning");
       var decisionWindDirection = document.getElementById("decisionWindDirection");
@@ -2664,7 +2768,8 @@
         currentLeg: "",
         boatProfile: "Typical cruiser 25-35 ft",
         alerts: [],
-        lastUpdated: null
+        lastUpdated: null,
+        lastAction: "Loaded"
       };
 
       window.state = state;
@@ -2786,9 +2891,12 @@
       }
 
       checkedNow.addEventListener("click", function () {
+        state.lastAction = "Mark Checked Now clicked";
+        state.lastUpdated = Date.now();
         updateLastCheckedNow();
         updateDecisionTimestampOnly();
         saveDecisionState();
+        renderDebug(state, computeSuggestion(state));
         updateStaleDecisionWarning();
       });
 
@@ -2880,6 +2988,7 @@
         decisionDetail.textContent = decisionCopy(decision, source);
         decisionUpdated.textContent = "Updated " + stamp;
         currentDecisionUpdatedAt = now;
+        state.lastAction = "Manual decision: " + decisionName(decision);
 
         try {
           localStorage.setItem("helm-decision", JSON.stringify({
@@ -3269,6 +3378,35 @@
         return warnings;
       }
 
+      function debugTimestamp(value) {
+        if (!value) {
+          return "Never";
+        }
+
+        var date = new Date(value);
+        return Number.isNaN(date.getTime()) ? "Unavailable" : formatDecisionTime(date);
+      }
+
+      function renderDebug(s, computed) {
+        if (!debugStateJson || !debugComputedJson || !debugWarnings || !debugLastAction || !debugLastUpdate) {
+          return;
+        }
+
+        var warnings = computeWarnings(s, computed).concat(computed.reasons || []);
+        var stateCopy = Object.assign({}, s, {
+          lastUpdatedText: debugTimestamp(s.lastUpdated)
+        });
+        var computedCopy = Object.assign({}, computed, {
+          guidance: computeGuidance(s, computed)
+        });
+
+        debugStateJson.textContent = JSON.stringify(stateCopy, null, 2);
+        debugComputedJson.textContent = JSON.stringify(computedCopy, null, 2);
+        debugWarnings.textContent = JSON.stringify(warnings, null, 2);
+        debugLastAction.textContent = s.lastAction || "Unknown";
+        debugLastUpdate.textContent = debugTimestamp(s.lastUpdated);
+      }
+
       function readStateFromInputs() {
         var quickPeriod = numberFromValue(quickWavePeriod.value);
         var quickWaterTempValue = numberFromValue(quickWaterTemp.value);
@@ -3295,6 +3433,7 @@
         var alertLevel = highestAlertLevel(s.alerts);
 
         updateMarineWarnings();
+        renderDebug(s, computed);
 
         decisionWindMeaning.textContent = windMeaningFromMPH(s.wind);
         suggestedDecision.setAttribute("data-suggestion", suggestion);
@@ -3340,16 +3479,19 @@
         return computed;
       }
 
-      function updateState(partial) {
+      function updateState(partial, action) {
         Object.assign(state, partial);
         state.boatProfile = normalizeBoatProfile(state.boatProfile);
+        if (action) {
+          state.lastAction = action;
+        }
         state.lastUpdated = Date.now();
         return runEngine();
       }
 
-      function updateSuggestedDecision() {
+      function updateSuggestedDecision(action) {
         readStateFromInputs();
-        return updateState({});
+        return updateState({}, action);
       }
 
       window.updateState = updateState;
@@ -3357,6 +3499,14 @@
       window.computeSuggestion = computeSuggestion;
       window.computeGuidance = computeGuidance;
       window.computeWarnings = computeWarnings;
+
+      debugToggle.addEventListener("click", function () {
+        var isHidden = debugPanel.hasAttribute("hidden");
+        debugPanel.toggleAttribute("hidden", !isHidden);
+        debugToggle.setAttribute("aria-expanded", String(isHidden));
+        debugToggle.textContent = isHidden ? "Hide Debug" : "Debug";
+        renderDebug(state, computeSuggestion(state));
+      });
 
       function syncQuickFromDecision() {
         quickWind.value = decisionWind.value;
@@ -3387,7 +3537,7 @@
         storageSet("helm-field-decisionVisibility", decisionVisibility.value);
       }
 
-      function syncDecisionFromQuick(markChecked) {
+      function syncDecisionFromQuick(markChecked, action) {
         decisionWind.value = quickWind.value;
         decisionWaves.value = quickWaves.value;
         decisionVisibility.value = quickVisibility.value;
@@ -3404,7 +3554,7 @@
           trend: conditionsTrend.value || "Stable",
           currentLeg: currentLeg.value || "",
           boatProfile: boatProfile.value
-        });
+        }, action || "Quick Check changed");
 
         if (markChecked) {
           updateLastCheckedNow();
@@ -3420,7 +3570,7 @@
       }
 
       function createSnapshot() {
-        syncDecisionFromQuick(true);
+        syncDecisionFromQuick(true, "Save Snapshot clicked");
         saveDecisionState();
 
         return Object.assign({}, state, {
@@ -3460,7 +3610,7 @@
       document.querySelectorAll("[data-decision-choice]").forEach(function (button) {
         button.addEventListener("click", function () {
           setDecision(button.getAttribute("data-decision-choice"), "Manual selection", true);
-          updateSuggestedDecision();
+          updateSuggestedDecision("Manual decision changed");
           updateStaleDecisionWarning();
         });
       });
@@ -3468,25 +3618,25 @@
       [decisionWind, decisionWaves, decisionVisibility].forEach(function (input) {
         input.addEventListener("input", function () {
           syncQuickFromDecision();
-          updateSuggestedDecision();
+          updateSuggestedDecision("Decision field changed");
         });
       });
 
       [quickWind, quickWaves, quickVisibility].forEach(function (input) {
         input.addEventListener("input", function () {
-          syncDecisionFromQuick(false);
+          syncDecisionFromQuick(false, "Quick Check input changed");
         });
       });
 
       [quickGusts, quickWavePeriod, quickWaterTemp].forEach(function (input) {
         input.addEventListener("input", function () {
-          syncDecisionFromQuick(false);
+          syncDecisionFromQuick(false, "Quick Check input changed");
         });
       });
 
       [boatProfile, conditionsTrend].forEach(function (input) {
         input.addEventListener("change", function () {
-          syncDecisionFromQuick(false);
+          syncDecisionFromQuick(false, "Quick Check selection changed");
         });
       });
 
@@ -3496,18 +3646,19 @@
       });
 
       currentLeg.addEventListener("change", function () {
-        updateState({ currentLeg: currentLeg.value || "" });
+        updateState({ currentLeg: currentLeg.value || "" }, "Current leg changed");
         storageSet("helm-field-currentLeg", currentLeg.value);
         saveDecisionState();
       });
 
       updateGuidance.addEventListener("click", function () {
-        syncDecisionFromQuick(true);
+        syncDecisionFromQuick(true, "Update Guidance clicked");
         updateLegRiskWarning();
         saveDecisionState();
       });
 
       saveSnapshot.addEventListener("click", function () {
+        state.lastAction = "Save Snapshot clicked";
         snapshots.unshift(createSnapshot());
         snapshots = snapshots.slice(0, 12);
         saveSnapshots();
@@ -3515,9 +3666,12 @@
       });
 
       clearSnapshots.addEventListener("click", function () {
+        state.lastAction = "Clear Snapshots clicked";
+        state.lastUpdated = Date.now();
         snapshots = [];
         saveSnapshots();
         renderSnapshots();
+        renderDebug(state, computeSuggestion(state));
       });
 
       startFresh.addEventListener("click", function () {
@@ -3536,7 +3690,7 @@
         suggestedDecision.setAttribute("data-suggestion", "none");
         suggestedDecisionLabel.textContent = "Suggested: enter wind, waves, and visibility";
         suggestedDecisionNote.textContent = "Manual decision remains in control.";
-        updateSuggestedDecision();
+        updateSuggestedDecision("Start Fresh clicked");
         updateLegRiskWarning();
         updateDepartureGuidance();
         updateStaleDecisionWarning();
@@ -3602,8 +3756,7 @@
 
       [marineWavePeriod, marineWaterTemperature].forEach(function (input) {
         input.addEventListener("input", function () {
-          updateSuggestedDecision();
-          updateDepartureGuidance();
+          updateSuggestedDecision("Marine conditions changed");
         });
       });
 
@@ -3710,7 +3863,7 @@
           activeNoaaAlertMessage = "";
           state.alerts = [];
           setAlertsBanner("none", "No active marine alerts");
-          updateState({ alerts: [] });
+          updateState({ alerts: [] }, "NOAA alerts checked: none active");
           return;
         }
 
@@ -3735,7 +3888,7 @@
                 event: alertEventName(item)
               };
             })
-          });
+          }, "NOAA warning alert loaded");
           return;
         }
 
@@ -3749,10 +3902,13 @@
               event: alertEventName(item)
             };
           })
-        });
+        }, "NOAA advisory alert loaded");
       }
 
       function refreshAlerts() {
+        state.lastAction = "Refresh NOAA Alerts clicked";
+        state.lastUpdated = Date.now();
+        renderDebug(state, computeSuggestion(state));
         refreshNoaaAlerts.disabled = true;
         setAlertsBanner("none", "Checking active NOAA alerts...");
 
@@ -3767,7 +3923,7 @@
             activeNoaaAlertLevel = "yellow";
             activeNoaaAlertMessage = "Alerts unavailable";
             setAlertsBanner("yellow", "Alerts unavailable — verify NOAA marine forecast");
-            updateState({ alerts: [{ level: "yellow", event: "Alerts unavailable" }] });
+            updateState({ alerts: [{ level: "yellow", event: "Alerts unavailable" }] }, "NOAA alerts unavailable");
             console.warn("NOAA alerts failed", error);
           });
       }
@@ -4003,7 +4159,7 @@
           visibility: numberFromValue(decisionVisibility.value),
           currentLeg: currentLeg.value || "",
           boatProfile: boatProfile.value
-        });
+        }, "NOAA Use for Decision");
 
         weatherNotes.value = [
           "NOAA " + record.period + ": " + record.shortForecast,
@@ -4077,6 +4233,9 @@
       }
 
       function refreshNoaa() {
+        state.lastAction = "Refresh NOAA Weather clicked";
+        state.lastUpdated = Date.now();
+        renderDebug(state, computeSuggestion(state));
         refreshNoaaWeather.disabled = true;
         setNoaaStatus("Refreshing NOAA weather for all stops...");
 
@@ -4130,6 +4289,9 @@
 
           marineSource.value = "NDBC " + stationId + " manual entry";
           storageSet("helm-field-marineSource", marineSource.value);
+          state.lastAction = "Buoy source selected: " + stationId;
+          state.lastUpdated = Date.now();
+          renderDebug(state, computeSuggestion(state));
 
           if (confirmation) {
             confirmation.textContent = "Source set. Enter readings in the Marine Log.";
@@ -4179,7 +4341,7 @@
       persistEditableFields();
 
       syncQuickFromDecision();
-      updateSuggestedDecision();
+      updateSuggestedDecision("Initial load");
       updateLegRiskWarning();
       updateDepartureGuidance();
       updateStaleDecisionWarning();
@@ -4225,7 +4387,7 @@
         currentDecisionUpdatedAt = null;
         setPendingDecision();
         decisionUpdated.textContent = "Decision not updated this session";
-        updateSuggestedDecision();
+        updateSuggestedDecision("Reset dashboard");
         updateLegRiskWarning();
         updateDepartureGuidance();
         updateStaleDecisionWarning();

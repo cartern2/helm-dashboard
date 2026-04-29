@@ -1,0 +1,15 @@
+{
+  "name": "helm-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Single-file Helm Dashboard QA harness",
+  "scripts": {
+    "serve": "http-server . -p 4173 -c-1",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.1",
+    "http-server": "^14.1.1"
+  }
+}
